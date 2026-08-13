@@ -14,7 +14,7 @@ export function TheoryToggles({
   const overlays = theories.filter((t) => t.id !== "consensus");
   return (
     <div className="flex flex-wrap items-center gap-1.5">
-      <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-stone-500">
+      <span className="mr-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
         Overlays
       </span>
       {overlays.map((t) => {
@@ -30,8 +30,8 @@ export function TheoryToggles({
             aria-pressed={on}
             className={`rounded-full border px-2.5 py-1 text-[11px] transition ${
               on
-                ? "border-transparent text-stone-950"
-                : "border-stone-700/80 bg-stone-950/40 text-stone-400 hover:border-stone-500 hover:text-stone-200"
+                ? "border-transparent text-[#163226]"
+                : "border-[var(--line)] bg-white text-[var(--muted)] hover:border-[var(--green)] hover:text-[var(--deep)]"
             }`}
             title={`${on ? "Hide" : "Show"} ${t.name}. Shift-click opens the notebook.`}
             style={

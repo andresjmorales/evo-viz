@@ -1,44 +1,100 @@
 @import "tailwindcss";
 
 :root {
-  --background: #100e0c;
-  --foreground: #e8e0d2;
-  --paper: #efe6d4;
+  --bg: #f3f7f2;
+  --paper: #ffffff;
+  --ink: #163226;
+  --muted: #4a6656;
+  --line: #cfe0d4;
+  --accent: #1f7a4d;
+  --accent-deep: #0f4d32;
+  --green: #1f7a4d;
+  --green-soft: #e7f5ec;
+  --deep: #0f4d32;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--bg);
+  --color-foreground: var(--ink);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-source-serif);
 }
 
 html,
 body {
-  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
 }
 
-.font-serif {
+::selection {
+  background: #b8ecc9;
+  color: #0b2a18;
+}
+
+.serif {
   font-family: var(--font-source-serif), "Iowan Old Style", Georgia, serif;
 }
 
-.timeline-scroll::-webkit-scrollbar {
-  height: 10px;
-  width: 10px;
+.grain {
+  background-image: radial-gradient(rgba(20, 48, 31, 0.04) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
 }
 
-.timeline-scroll::-webkit-scrollbar-thumb {
-  background: #3f3a34;
+.notebook-rule {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 27px,
+    rgba(31, 122, 77, 0.08) 27px,
+    rgba(31, 122, 77, 0.08) 28px
+  );
+}
+
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: #9ec9ad;
   border-radius: 99px;
 }
 
-.timeline-scroll::-webkit-scrollbar-track {
-  background: #1a1612;
+input[type="range"].time-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 8px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, #cfe8d6, #1f7a4d);
+}
+
+input[type="range"].time-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 99px;
+  background: #0f4d32;
+  border: 3px solid #fff;
+  box-shadow: 0 1px 4px rgba(15, 77, 50, 0.35);
+  cursor: grab;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rise-in {
+  animation: rise-in 0.55s ease both;
 }
