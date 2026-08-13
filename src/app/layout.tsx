@@ -18,9 +18,9 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "evo-viz — human origins, claims, overlays",
+  title: "evo-viz — a story of human origins",
   description:
-    "A textbook-style timeline of hominin evolution with evidence grades, 3D fossil casts, and optional theistic-evolution overlays.",
+    "A teaching story and research atlas of hominin evolution: walking figures, a spinning globe, evidence grades, 3D fossil casts, and optional theistic-evolution overlays.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

@@ -16,35 +16,35 @@ export function ClaimCard({
     .filter((s): s is Source => Boolean(s));
 
   return (
-    <article className="rounded-md border border-stone-300 bg-[#f7f0e2] p-3 text-stone-800 shadow-sm">
+    <article className="rounded-2xl border border-[var(--line)] bg-[var(--green-soft)]/50 p-3 text-[var(--ink)]">
       <div className="flex items-start justify-between gap-3">
         <button
           type="button"
           onClick={() => onOpen?.(claim.id)}
-          className="text-left font-serif text-[15px] leading-snug text-stone-900 hover:underline"
+          className="text-left font-serif text-[15px] leading-snug text-[var(--ink)] hover:underline"
         >
           {claim.question}
         </button>
         <StatusBadge status={claim.status} />
       </div>
       {!compact ? (
-        <p className="mt-2 text-[13px] leading-relaxed text-stone-700">
+        <p className="mt-2 text-[13px] leading-relaxed text-[var(--muted)]">
           {claim.summary}
         </p>
       ) : (
-        <p className="mt-1 line-clamp-3 text-[12px] leading-relaxed text-stone-600">
+        <p className="mt-1 line-clamp-3 text-[12px] leading-relaxed text-[var(--muted)]">
           {claim.summary}
         </p>
       )}
-      <p className="mt-2 text-[11px] italic text-stone-500">{claim.statusRationale}</p>
-      <ol className="mt-2 space-y-0.5 text-[11px] text-stone-600">
+      <p className="mt-2 text-[11px] italic text-[var(--muted)]">{claim.statusRationale}</p>
+      <ol className="mt-2 space-y-0.5 text-[11px] text-[var(--muted)]">
         {sources.slice(0, compact ? 3 : 8).map((s, i) => (
           <li key={s.id}>
             <a
               href={s.url}
               target="_blank"
               rel="noreferrer"
-              className="underline decoration-stone-400 underline-offset-2 hover:decoration-stone-700"
+              className="underline decoration-[var(--line)] underline-offset-2 hover:decoration-[var(--green)]"
             >
               [{i + 1}] {s.authors ? `${s.authors}. ` : ""}
               {s.title}

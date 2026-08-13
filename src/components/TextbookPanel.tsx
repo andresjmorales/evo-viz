@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import {
   claimsForTaxon,
@@ -16,14 +15,12 @@ import { taxa } from "@/data/taxa";
 import { theories } from "@/data/theories";
 import type { Claim, Fossil, Taxon, Theory } from "@/data/types";
 import { formatRange } from "@/lib/format";
+import { taxonColor } from "@/lib/palette";
 import { ClaimCard } from "./ClaimCard";
+import { CranialProfile } from "./CranialProfile";
 import { FossilViewer } from "./FossilViewer";
+import { HomininFigure } from "./HomininFigure";
 import { StatusBadge } from "./StatusBadge";
-
-const MorphospaceKeyed = dynamic(
-  () => import("./Morphospace").then((m) => m.MorphospaceKeyed),
-  { ssr: false, loading: () => <p className="text-sm text-stone-500">Loading morphospace…</p> },
-);
 
 export type PanelTarget =
   | { kind: "taxon"; id: string }
@@ -38,31 +35,41 @@ export function TextbookPanel({
   onClose,
   compareId,
   onCompare,
+  variant = "docked",
 }: {
   target: PanelTarget | null;
   onOpen: (t: PanelTarget) => void;
   onClose: () => void;
   compareId: string | null;
   onCompare: (id: string | null) => void;
+  variant?: "docked" | "sheet";
 }) {
   if (!target) {
+    if (variant === "sheet") return null;
     return (
-      <aside className="hidden w-[420px] shrink-0 overflow-auto border-l border-stone-800 bg-[#efe6d4] text-stone-800 xl:block">
+      <aside className="hidden w-[400px] shrink-0 overflow-auto border-l border-[var(--line)] bg-white text-[var(--ink)] xl:block">
         <Welcome onOpen={onOpen} />
       </aside>
     );
   }
 
+  const sheet = variant === "sheet";
   return (
-    <aside className="fixed inset-y-0 right-0 z-30 w-full max-w-[460px] overflow-auto border-l border-stone-700 bg-[#efe6d4] text-stone-800 shadow-2xl md:w-[460px] xl:static xl:z-0 xl:shadow-none">
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-stone-300 bg-[#efe6d4]/95 px-4 py-2 backdrop-blur">
-        <span className="font-serif text-sm tracking-wide text-stone-600">
+    <aside
+      className={
+        sheet
+          ? "fixed inset-y-0 right-0 z-40 w-full max-w-[460px] overflow-auto border-l border-[var(--line)] bg-white text-[var(--ink)] shadow-2xl"
+          : "fixed inset-y-0 right-0 z-30 w-full max-w-[460px] overflow-auto border-l border-[var(--line)] bg-white text-[var(--ink)] shadow-2xl md:w-[460px] xl:static xl:z-0 xl:shadow-none"
+      }
+    >
+      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[var(--line)] bg-white/95 px-4 py-2 backdrop-blur">
+        <span className="font-serif text-sm tracking-wide text-[var(--muted)]">
           Field notebook
         </span>
         <button
           type="button"
           onClick={onClose}
-          className="rounded px-2 py-1 text-xs text-stone-600 hover:bg-stone-200"
+          className="rounded-full px-2 py-1 text-xs text-[var(--muted)] hover:bg-[var(--green-soft)]"
         >
           Close
         </button>
@@ -94,15 +101,15 @@ export function TextbookPanel({
 function Welcome({ onOpen }: { onOpen: (t: PanelTarget) => void }) {
   return (
     <div className="p-5">
-      <h2 className="font-serif text-2xl text-stone-900">How to read this</h2>
-      <p className="mt-2 text-sm leading-relaxed text-stone-700">
+      <h2 className="font-serif text-2xl text-[var(--ink)]">How to read the atlas</h2>
+      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
         The horizontal bars are species (or useful grades) through time. Click
         any bar for anatomy, behavior, fossils, and claims. Hatched ends mean
         the date is fuzzy. Status chips run from <strong>settled</strong> to{" "}
         <strong>speculative</strong> — they are editorial, with footnotes back to
         papers, books, and films.
       </p>
-      <p className="mt-2 text-sm leading-relaxed text-stone-700">
+      <p className="mt-2 text-sm leading-relaxed text-[var(--muted)]">
         Theory overlays do not replace the science layer. They show where
         different theistic-evolution models would place Adam and Eve, or refuse
         to place them.
@@ -110,7 +117,7 @@ function Welcome({ onOpen }: { onOpen: (t: PanelTarget) => void }) {
       <button
         type="button"
         onClick={() => onOpen({ kind: "questions" })}
-        className="mt-4 w-full rounded-md bg-stone-900 px-3 py-2 text-left text-sm text-amber-50"
+        className="mt-4 w-full rounded-full bg-[var(--green)] px-3 py-2 text-left text-sm text-white"
       >
         Open the question list
       </button>
@@ -145,22 +152,24 @@ function TaxonPages({
   const fossilList = taxon ? fossilsForTaxon(taxon.id) : [];
   const taxonClaims = taxon ? claimsForTaxon(taxon.id) : [];
   const other = compareId ? getTaxon(compareId) : undefined;
-  const [blend, setBlend] = useState(0);
 
   if (!taxon) return <p>Unknown taxon.</p>;
 
   return (
     <div>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-stone-500">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
         {formatRange(taxon.rangeStartKa, taxon.rangeEndKa)}
         {taxon.regions.length ? ` · ${taxon.regions.join(", ")}` : ""}
       </p>
-      <h2 className="mt-1 font-serif text-2xl italic text-stone-950">
+      <h2 className="mt-1 font-serif text-2xl italic text-[var(--ink)]">
         {taxon.name}
       </h2>
       {taxon.nickname ? (
-        <p className="text-sm text-stone-600">{taxon.nickname}</p>
+        <p className="text-sm text-[var(--muted)]">{taxon.nickname}</p>
       ) : null}
+      <div className="mt-3">
+        <HomininFigure taxonId={taxon.id} height={120} />
+      </div>
 
       <div className="mt-3 flex flex-wrap gap-1">
         {(["overview", "evidence", "3d", "compare"] as const).map((t) => (
@@ -170,8 +179,8 @@ function TaxonPages({
             onClick={() => setTab(t)}
             className={`rounded-full px-2.5 py-1 text-[11px] capitalize ${
               tab === t
-                ? "bg-stone-900 text-amber-50"
-                : "bg-stone-200 text-stone-700"
+                ? "bg-[var(--green)] text-white"
+                : "bg-[var(--green-soft)] text-[var(--deep)]"
             }`}
           >
             {t === "3d" ? "3D / scans" : t}
@@ -186,7 +195,7 @@ function TaxonPages({
             <h3 className="font-serif text-lg">Anatomy</h3>
             <p className="mt-1">{taxon.anatomy}</p>
             {taxon.cranialCapacityCc ? (
-              <p className="mt-1 text-stone-600">
+              <p className="mt-1 text-[var(--muted)]">
                 Cranial capacity {taxon.cranialCapacityCc[0]}–
                 {taxon.cranialCapacityCc[1]} cc
                 {taxon.heightCm
@@ -236,9 +245,9 @@ function TaxonPages({
 
       {tab === "3d" ? (
         <div className="mt-4 space-y-4">
-          <MorphospaceKeyed a={taxon.morph} label={taxon.name} />
+          <CranialProfile taxonId={taxon.id} label={taxon.name} />
           {fossilList.map((f) => (
-            <div key={f.id} className="rounded-md border border-stone-300 p-2">
+            <div key={f.id} className="rounded-2xl border border-[var(--line)] p-2">
               <button
                 type="button"
                 className="font-serif text-base underline"
@@ -246,7 +255,7 @@ function TaxonPages({
               >
                 {f.name}
               </button>
-              <p className="text-[12px] text-stone-600">
+              <p className="text-[12px] text-[var(--muted)]">
                 {f.site} · {f.notes}
               </p>
               <div className="mt-2">
@@ -254,11 +263,12 @@ function TaxonPages({
               </div>
             </div>
           ))}
-          <p className="text-[11px] text-stone-500">
+          <p className="text-[11px] text-[var(--muted)]">
             Casts: Digital Atlas of Ancient Life (Cornell) on Sketchfab, CC
             BY-NC-SA. Smithsonian scans of Hall of Human Origins casts are
             view-only on si.edu. African Fossils (Turkana / NMK) is another
-            public 3D lab.
+            public 3D lab. The green outline above is a teaching drawing, not a
+            scan.
           </p>
         </div>
       ) : null}
@@ -268,7 +278,7 @@ function TaxonPages({
           <label className="block text-sm">
             Compare with
             <select
-              className="mt-1 w-full rounded border border-stone-400 bg-white p-1.5 text-sm"
+              className="mt-1 w-full rounded-xl border border-[var(--line)] bg-white p-1.5 text-sm"
               value={compareId ?? ""}
               onChange={(e) => onCompare(e.target.value || null)}
             >
@@ -284,27 +294,15 @@ function TaxonPages({
           </label>
           {other ? (
             <>
-              <label className="block text-xs text-stone-600">
-                Morph blend ({taxon.name} → {other.name})
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={Math.round(blend * 100)}
-                  onChange={(e) => setBlend(Number(e.target.value) / 100)}
-                  className="mt-1 w-full"
-                />
-              </label>
-              <MorphospaceKeyed
-                a={taxon.morph}
-                b={other.morph}
-                blend={blend}
+              <CranialProfile
+                taxonId={taxon.id}
                 label={`${taxon.name} ↔ ${other.name}`}
+                compareId={other.id}
               />
               <CompareTable a={taxon} b={other} onOpen={onOpen} />
             </>
           ) : (
-            <p className="text-sm text-stone-600">
+            <p className="text-sm text-[var(--muted)]">
               Tip: compare Neanderthals with Denisovans, or habilis with
               erectus.
             </p>
@@ -341,7 +339,7 @@ function CompareTable({
     <div>
       <table className="w-full text-left text-[12px]">
         <thead>
-          <tr className="text-stone-500">
+          <tr className="text-[var(--muted)]">
             <th className="py-1 font-medium"> </th>
             <th className="py-1 font-medium">{a.name}</th>
             <th className="py-1 font-medium">{b.name}</th>
@@ -349,8 +347,8 @@ function CompareTable({
         </thead>
         <tbody>
           {rows.map((r) => (
-            <tr key={r[0]} className="border-t border-stone-300 align-top">
-              <td className="py-1 pr-2 text-stone-500">{r[0]}</td>
+            <tr key={r[0]} className="border-t border-[var(--line)] align-top">
+              <td className="py-1 pr-2 text-[var(--muted)]">{r[0]}</td>
               <td className="py-1 pr-2">{r[1]}</td>
               <td className="py-1">{r[2]}</td>
             </tr>
@@ -395,8 +393,8 @@ function ClaimPage({
                   key={id}
                   type="button"
                   onClick={() => onOpen({ kind: "taxon", id })}
-                  className="rounded-full px-2 py-0.5 text-[11px] text-stone-900"
-                  style={{ background: t.color }}
+                  className="rounded-full px-2 py-0.5 text-[11px] text-white"
+                  style={{ background: taxonColor(t), color: "#fff" }}
                 >
                   {t.name}
                 </button>
@@ -439,15 +437,15 @@ function TheoryPage({
   const sources = theory.sourceIds.map((id) => getSource(id)).filter(Boolean);
   return (
     <div className="space-y-3 text-[13.5px] leading-relaxed">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-stone-500">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
         {theory.kind.replace("-", " ")}
         {theory.year ? ` · ${theory.year}` : ""}
       </p>
-      <h2 className="font-serif text-2xl text-stone-950">{theory.name}</h2>
-      <p className="text-sm text-stone-600">{theory.author}</p>
+      <h2 className="font-serif text-2xl text-[var(--ink)]">{theory.name}</h2>
+      <p className="text-sm text-[var(--muted)]">{theory.author}</p>
       <StatusBadge status={theory.status} showHint />
       <p>{theory.summary}</p>
-      <p className="rounded-md bg-stone-200/70 p-2 text-sm">{theory.howToRead}</p>
+      <p className="rounded-2xl bg-[var(--green-soft)] p-3 text-sm">{theory.howToRead}</p>
       <h3 className="font-serif text-lg">What it claims</h3>
       <ul className="list-disc space-y-1 pl-5">
         {theory.claims.map((c) => (
@@ -460,7 +458,7 @@ function TheoryPage({
           <li key={c}>{c}</li>
         ))}
       </ul>
-      <p className="text-[12px] italic text-stone-500">{theory.statusRationale}</p>
+      <p className="text-[12px] italic text-[var(--muted)]">{theory.statusRationale}</p>
       <ol className="space-y-1 text-[12px]">
         {sources.map((s, i) =>
           s ? (
@@ -508,7 +506,7 @@ function FossilPage({
   return (
     <div className="space-y-3">
       <h2 className="font-serif text-2xl">{fossil.name}</h2>
-      <p className="text-sm text-stone-600">
+      <p className="text-sm text-[var(--muted)]">
         {fossil.specimen ? `${fossil.specimen} · ` : ""}
         {fossil.site}
       </p>
@@ -546,7 +544,7 @@ function QuestionsPage({ onOpen }: { onOpen: (t: PanelTarget) => void }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Denisovans, fire, Adam…"
-        className="mt-2 w-full rounded border border-stone-400 bg-white px-2 py-1.5 text-sm"
+        className="mt-2 w-full rounded-xl border border-[var(--line)] bg-white px-2 py-1.5 text-sm"
       />
       <div className="mt-3 space-y-2">
         {list.map((c) => (

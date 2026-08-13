@@ -2,11 +2,11 @@ import type { Status } from "@/data/types";
 import { STATUS_BLURB, STATUS_LABEL } from "@/lib/format";
 
 const TONE: Record<Status, string> = {
-  settled: "bg-emerald-900/70 text-emerald-100 ring-emerald-700/80",
-  strong: "bg-sky-900/70 text-sky-100 ring-sky-700/80",
-  contested: "bg-amber-900/70 text-amber-100 ring-amber-700/80",
-  shaky: "bg-orange-950/80 text-orange-100 ring-orange-800/80",
-  speculative: "bg-fuchsia-950/70 text-fuchsia-100 ring-fuchsia-800/70",
+  settled: "bg-emerald-100 text-emerald-900 ring-emerald-300",
+  strong: "bg-sky-100 text-sky-900 ring-sky-300",
+  contested: "bg-amber-100 text-amber-900 ring-amber-300",
+  shaky: "bg-orange-100 text-orange-900 ring-orange-300",
+  speculative: "bg-violet-100 text-violet-900 ring-violet-300",
 };
 
 export function StatusBadge({
@@ -25,7 +25,7 @@ export function StatusBadge({
         {STATUS_LABEL[status]}
       </span>
       {showHint ? (
-        <span className="max-w-prose text-[11px] leading-snug text-stone-500">
+        <span className="max-w-prose text-[11px] leading-snug text-[var(--muted)]">
           {STATUS_BLURB[status]}
         </span>
       ) : null}

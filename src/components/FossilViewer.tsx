@@ -10,7 +10,7 @@ export function FossilViewer({ fossil }: { fossil: Fossil }) {
   return (
     <div className="space-y-3">
       {fossil.image ? (
-        <figure className="overflow-hidden rounded-md border border-stone-300 bg-stone-200">
+        <figure className="overflow-hidden rounded-2xl border border-[var(--line)] bg-[var(--green-soft)]">
           {/* Wikimedia FilePath; license on the Commons file page */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -18,7 +18,7 @@ export function FossilViewer({ fossil }: { fossil: Fossil }) {
             alt={fossil.name}
             className="max-h-64 w-full object-contain"
           />
-          <figcaption className="px-2 py-1 text-[10px] text-stone-600">
+          <figcaption className="px-2 py-1 text-[10px] text-[var(--muted)]">
             {fossil.image.credit} ({fossil.image.license})
           </figcaption>
         </figure>
@@ -29,11 +29,11 @@ export function FossilViewer({ fossil }: { fossil: Fossil }) {
           <iframe
             title={sketch.caption}
             src={sketchfabEmbed(sketch.modelId)}
-            className="h-72 w-full rounded-md border border-stone-700 bg-black"
+            className="h-72 w-full rounded-2xl border border-[var(--line)] bg-[#111]"
             allow="autoplay; fullscreen; xr-spatial-tracking"
             allowFullScreen
           />
-          <p className="mt-1 text-[11px] leading-snug text-stone-500">
+          <p className="mt-1 text-[11px] leading-snug text-[var(--muted)]">
             {sketch.caption}. {sketch.credit} Drag to rotate.
           </p>
         </div>
@@ -44,16 +44,16 @@ export function FossilViewer({ fossil }: { fossil: Fossil }) {
           href={smith.url}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 text-[12px] text-amber-800 underline decoration-amber-800/40 underline-offset-2 hover:decoration-amber-800"
+          className="inline-flex items-center gap-1 text-[12px] text-[var(--deep)] underline decoration-[var(--green)]/40 underline-offset-2 hover:decoration-[var(--green)]"
         >
           Open Smithsonian 3D viewer: {smith.caption}
         </a>
       ) : null}
 
       {!sketch && !fossil.image ? (
-        <p className="text-sm text-stone-600">
+        <p className="text-sm text-[var(--muted)]">
           No public rotatable scan is bundled for this specimen. Use the
-          morphospace schematic, or follow museum links in Sources.
+          cranial profile drawing, or follow museum links in Sources.
         </p>
       ) : null}
     </div>
