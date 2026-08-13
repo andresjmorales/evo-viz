@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useMemo, useState } from "react";
 import {
   claimsForTaxon,
@@ -17,8 +18,12 @@ import type { Claim, Fossil, Taxon, Theory } from "@/data/types";
 import { formatRange } from "@/lib/format";
 import { ClaimCard } from "./ClaimCard";
 import { FossilViewer } from "./FossilViewer";
-import { MorphospaceKeyed } from "./Morphospace";
 import { StatusBadge } from "./StatusBadge";
+
+const MorphospaceKeyed = dynamic(
+  () => import("./Morphospace").then((m) => m.MorphospaceKeyed),
+  { ssr: false, loading: () => <p className="text-sm text-stone-500">Loading morphospace…</p> },
+);
 
 export type PanelTarget =
   | { kind: "taxon"; id: string }

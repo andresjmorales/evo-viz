@@ -5,9 +5,11 @@ import { theories } from "@/data/theories";
 export function TheoryToggles({
   active,
   onToggle,
+  onOpen,
 }: {
   active: string[];
   onToggle: (id: string) => void;
+  onOpen?: (id: string) => void;
 }) {
   const overlays = theories.filter((t) => t.id !== "consensus");
   return (
@@ -21,13 +23,17 @@ export function TheoryToggles({
           <button
             key={t.id}
             type="button"
-            onClick={() => onToggle(t.id)}
+            onClick={(e) => {
+              if (e.shiftKey && onOpen) onOpen(t.id);
+              else onToggle(t.id);
+            }}
             aria-pressed={on}
             className={`rounded-full border px-2.5 py-1 text-[11px] transition ${
               on
                 ? "border-transparent text-stone-950"
                 : "border-stone-700/80 bg-stone-950/40 text-stone-400 hover:border-stone-500 hover:text-stone-200"
             }`}
+            title={`${on ? "Hide" : "Show"} ${t.name}. Shift-click opens the notebook.`}
             style={
               on
                 ? { background: t.color, boxShadow: `0 0 0 1px ${t.color}` }

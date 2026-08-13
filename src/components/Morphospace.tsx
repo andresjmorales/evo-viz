@@ -103,7 +103,17 @@ export function Morphospace({
     const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 40);
     camera.position.set(2.4, 0.6, 3.4);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    let renderer: THREE.WebGLRenderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      if (!renderer.getContext()) {
+        throw new Error("no webgl");
+      }
+    } catch {
+      el.innerHTML =
+        '<p class="p-3 text-sm text-stone-400">WebGL is unavailable in this browser. Use the fossil scans below.</p>';
+      return;
+    }
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     el.appendChild(renderer.domElement);
 

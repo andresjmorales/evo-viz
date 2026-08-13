@@ -46,18 +46,18 @@ export function MigrationMap({
   const [lx, ly] = project(32.5, 35.5);
 
   return (
-    <div className="flex h-[220px] border-t border-stone-800 bg-[#0c1214] md:h-[260px]">
+    <div className="flex h-[168px] border-t border-stone-800 bg-[#0c1214] md:h-[200px]">
       <div className="relative min-w-0 flex-1">
         <svg viewBox={`0 0 ${W} ${H}`} className="h-full w-full" role="img">
           <title>Fossil sites and inferred movements</title>
-          <rect width={W} height={H} fill="#0c1214" />
+          <rect width={W} height={H} fill="#152028" />
           {LAND.map((land) => (
             <path
               key={land.name}
               d={land.d}
-              fill="#1b2420"
-              stroke="#2a3a32"
-              strokeWidth="1.2"
+              fill="#3d5a4a"
+              stroke="#8fad96"
+              strokeWidth="1.6"
             />
           ))}
           {moves.map((m) => {

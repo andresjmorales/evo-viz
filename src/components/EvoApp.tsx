@@ -39,7 +39,6 @@ export function EvoApp() {
     setActiveTheories((cur) =>
       cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id],
     );
-    setTarget({ kind: "theory", id });
   };
 
   return (
@@ -113,7 +112,18 @@ export function EvoApp() {
             </div>
           ) : null}
         </div>
-        <TheoryToggles active={activeTheories} onToggle={toggleTheory} />
+        <TheoryToggles
+          active={activeTheories}
+          onToggle={toggleTheory}
+          onOpen={(id) => setTarget({ kind: "theory", id })}
+        />
+        <button
+          type="button"
+          onClick={() => setTarget({ kind: "taxon", id: "sapiens" })}
+          className="rounded-full border border-amber-200/40 px-3 py-1 text-[11px] text-amber-100 hover:border-amber-200"
+        >
+          H. sapiens
+        </button>
         <button
           type="button"
           onClick={() => setTarget({ kind: "questions" })}
@@ -142,7 +152,7 @@ export function EvoApp() {
                 className="underline decoration-stone-600 underline-offset-2"
                 style={{ color: t.color }}
               >
-                {t.shortLabel}: {t.overlay?.label ?? t.name}
+                {t.shortLabel}: {t.overlay?.label ?? t.name} (open note)
               </button>
             );
           })}
@@ -157,6 +167,33 @@ export function EvoApp() {
             activeTheories={activeTheories}
             onSelectTheory={(id) => setTarget({ kind: "theory", id })}
           />
+          <div className="flex items-center justify-between gap-3 border-t border-stone-800 bg-[#161310] px-4 py-1.5 text-xs">
+            <div className="min-w-0 truncate text-stone-300">
+              {selectedTaxon ? (
+                <>
+                  <span className="text-stone-500">Selected </span>
+                  <em className="font-serif text-amber-100">{selectedTaxon.name}</em>
+                  <span className="text-stone-500">
+                    {" "}
+                    — click Evidence or 3D in the notebook
+                  </span>
+                </>
+              ) : (
+                <span className="text-stone-500">
+                  Click a colored bar (or a lane name) to open the notebook.
+                </span>
+              )}
+            </div>
+            {selectedTaxon ? (
+              <button
+                type="button"
+                onClick={() => setTarget({ kind: "taxon", id: selectedTaxon.id })}
+                className="shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-stone-900"
+              >
+                Open notebook
+              </button>
+            ) : null}
+          </div>
           <MigrationMap taxon={selectedTaxon} activeTheories={activeTheories} />
         </div>
         <TextbookPanel

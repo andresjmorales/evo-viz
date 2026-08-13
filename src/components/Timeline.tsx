@@ -8,8 +8,8 @@ import type { Taxon, Theory } from "@/data/types";
 import { formatKa, formatRange } from "@/lib/format";
 import { AXIS_TICKS_KA, TIMELINE_WIDTH, kaToX } from "@/lib/timeScale";
 
-const LANE_H = 52;
-const AXIS_H = 36;
+const LANE_H = 40;
+const AXIS_H = 28;
 const LABEL_W = 148;
 
 export function Timeline({
@@ -41,7 +41,7 @@ export function Timeline({
   }, []);
 
   return (
-    <div className="relative min-h-0 flex-1">
+    <div className="relative min-h-[380px] flex-1">
       <div
         ref={scroller}
         className="absolute inset-0 overflow-auto timeline-scroll"
@@ -50,16 +50,21 @@ export function Timeline({
           className="relative"
           style={{ width: TIMELINE_WIDTH + LABEL_W, height }}
         >
-          <div className="sticky left-0 z-20 h-full w-[148px] border-r border-stone-800/80 bg-[#100e0c]/95 backdrop-blur-sm">
-            {LANES.map((lane) => (
-              <div
-                key={lane.id}
-                className="flex items-center px-3 text-[11px] font-medium tracking-wide text-stone-400"
-                style={{ height: LANE_H }}
-              >
-                {lane.label}
-              </div>
-            ))}
+          <div className="sticky left-0 z-30 h-full w-[148px] border-r border-stone-800/80 bg-[#100e0c]/95 backdrop-blur-sm">
+            {LANES.map((lane) => {
+              const first = taxa.find((t) => t.lane === lane.id);
+              return (
+                <button
+                  key={lane.id}
+                  type="button"
+                  onClick={() => first && onSelect(first.id)}
+                  className="flex w-full items-center px-3 text-left text-[11px] font-medium tracking-wide text-stone-400 hover:text-amber-100"
+                  style={{ height: LANE_H }}
+                >
+                  {lane.label}
+                </button>
+              );
+            })}
           </div>
 
           <div
@@ -102,7 +107,7 @@ export function Timeline({
               const x2 = kaToX(taxon.rangeEndKa);
               const left = Math.min(x1, x2);
               const width = Math.max(18, Math.abs(x2 - x1));
-              const top = taxon.lane * LANE_H + 10;
+                  const top = taxon.lane * LANE_H + 4;
               const selected = selectedId === taxon.id;
               return (
                 <button
@@ -118,7 +123,7 @@ export function Timeline({
                     });
                   }}
                   onMouseLeave={() => setTip(null)}
-                  className={`absolute z-10 rounded-sm text-left transition ${
+                  className={`absolute z-20 rounded-sm text-left transition ${
                     selected
                       ? "ring-2 ring-amber-200 ring-offset-1 ring-offset-[#100e0c]"
                       : "hover:brightness-110"
@@ -127,9 +132,9 @@ export function Timeline({
                     left,
                     top,
                     width,
-                    height: 32,
+                    height: 30,
                     background: taxon.color,
-                    opacity: selected ? 1 : 0.88,
+                    opacity: selected ? 1 : 0.92,
                     boxShadow: selected
                       ? `0 0 18px ${taxon.color}88`
                       : "0 1px 0 rgba(0,0,0,0.35)",
@@ -215,7 +220,7 @@ function TheoryBand({
     <>
       {covers.length > 1 ? (
         <div
-          className="pointer-events-none absolute rounded-sm opacity-20"
+          className="pointer-events-none absolute rounded-sm opacity-25"
           style={{
             left: kaToX(Math.max(...covers.map((t) => t!.rangeStartKa))),
             width: Math.max(
@@ -231,23 +236,22 @@ function TheoryBand({
       ) : null}
       <button
         type="button"
-        onClick={onClick}
-        className="absolute z-20 flex items-center justify-center rounded-sm border border-dashed text-[9px] font-semibold tracking-wide uppercase"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClick();
+        }}
+        className="absolute z-10 flex h-4 items-center justify-center rounded-sm border border-dashed px-1 text-[8px] font-semibold tracking-wide uppercase"
         style={{
           left,
-          width: Math.max(width, overlay.kind === "wave" ? 28 : width),
-          top,
-          height: overlay.kind === "wave" ? LANE_H - 6 : 8,
+          width: Math.max(width, 36),
+          top: Math.max(0, top - 6),
           borderColor: theory.color,
           color: theory.color,
-          background:
-            overlay.kind === "wave"
-              ? `radial-gradient(circle at 70% 50%, ${theory.color}55, transparent 70%)`
-              : `${theory.color}33`,
+          background: `${theory.color}44`,
         }}
         title={overlay.label}
       >
-        {overlay.kind !== "band" ? theory.shortLabel : ""}
+        {theory.shortLabel}
       </button>
     </>
   );
