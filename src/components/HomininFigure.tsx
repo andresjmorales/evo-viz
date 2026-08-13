@@ -23,7 +23,7 @@ export function HomininFigure({
       type="button"
       onClick={onClick}
       className={`flex flex-col items-center gap-2 rounded-2xl px-3 py-3 text-center transition ${
-        active ? "opacity-100" : "opacity-25"
+        active ? "opacity-100" : "opacity-45"
       } ${onClick ? "hover:-translate-y-0.5 hover:bg-white/70" : ""}`}
     >
       <div

@@ -51,7 +51,7 @@ export const TRIO = [
   },
   {
     id: "neanderthal",
-    label: "Neanderthal",
+    label: "neanderthalensis",
     when: "400 – 40 ka",
     line: "Eurasian cousin. Large brain. We mixed.",
   },
