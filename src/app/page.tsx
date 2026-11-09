@@ -1,5 +1,5 @@
-import { EvoApp } from "@/components/EvoApp";
+import { App } from "@/components/App";
 
 export default function Home() {
-  return <EvoApp />;
+  return <App />;
 }

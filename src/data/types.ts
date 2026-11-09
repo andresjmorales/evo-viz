@@ -102,6 +102,8 @@ export interface Fossil {
 export interface Site {
   id: string;
   name: string;
+  /** Approximate window of the fossils or occupation at this site, in ka. */
+  ka: [number, number];
   lat: number;
   lon: number;
   taxonIds: string[];
@@ -113,9 +115,8 @@ export interface Migration {
   label: string;
   startKa: number;
   endKa: number;
-  fromSiteId: string;
-  toSiteId: string;
-  via?: [number, number][];
+  /** Waypoints as [lat, lon], origin first. Paths follow land or short crossings. */
+  path: [number, number][];
   status: Status;
   notes: string;
   sourceIds: string[];

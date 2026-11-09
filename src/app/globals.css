@@ -1,100 +1,159 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #f3f7f2;
-  --paper: #ffffff;
-  --ink: #163226;
-  --muted: #4a6656;
-  --line: #cfe0d4;
-  --accent: #1f7a4d;
-  --accent-deep: #0f4d32;
-  --green: #1f7a4d;
-  --green-soft: #e7f5ec;
-  --deep: #0f4d32;
+  --page: #ffffff;
+  --panel: #f4f8f5;
+  --ink: #0d2118;
+  --muted: #586b61;
+  --faint: #8a9a91;
+  --line: #dde7e0;
+  --green: #0c9a56;
+  --green-bright: #19c46f;
+  --green-deep: #06402b;
+  --green-soft: #e6f6ed;
+  --hero: #052a1d;
+  --mint: #8ff0bd;
 }
 
 @theme inline {
-  --color-background: var(--bg);
+  --color-background: var(--page);
   --color-foreground: var(--ink);
   --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
   --font-serif: var(--font-source-serif);
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 72px;
 }
 
 html,
 body {
-  background: var(--bg);
+  background: var(--page);
   color: var(--ink);
 }
 
 body {
   font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 ::selection {
-  background: #b8ecc9;
-  color: #0b2a18;
+  background: #b9f0cf;
+  color: #06301f;
 }
 
-.serif {
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.display {
   font-family: var(--font-source-serif), "Iowan Old Style", Georgia, serif;
+  letter-spacing: -0.015em;
+  font-weight: 500;
 }
 
-.grain {
-  background-image: radial-gradient(rgba(20, 48, 31, 0.04) 0.6px, transparent 0.6px);
-  background-size: 3px 3px;
+.kicker {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
 }
 
-.notebook-rule {
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent,
-    transparent 27px,
-    rgba(31, 122, 77, 0.08) 27px,
-    rgba(31, 122, 77, 0.08) 28px
-  );
+.hero-bg {
+  background:
+    radial-gradient(900px 620px at 74% 44%, rgba(40, 190, 125, 0.2), transparent 62%),
+    radial-gradient(700px 500px at 0% 0%, rgba(25, 196, 111, 0.1), transparent 60%),
+    linear-gradient(180deg, #06301f 0%, #04241a 100%);
 }
 
-.scroll-thin::-webkit-scrollbar {
+.globe-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1;
+  padding: 4px 7px 4px 6px;
+  border-radius: 99px;
+  color: #eafff3;
+  background: rgba(3, 30, 20, 0.62);
+  border: 1px solid color-mix(in srgb, var(--c, #8ff0bd) 55%, transparent);
+  backdrop-filter: blur(4px);
+  transition: opacity 0.25s ease;
+  cursor: pointer;
+  will-change: transform;
+}
+.globe-label:hover {
+  background: rgba(3, 30, 20, 0.9);
+}
+
+.thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #c3d6ca transparent;
+}
+.thin-scroll::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
-
-.scroll-thin::-webkit-scrollbar-thumb {
-  background: #9ec9ad;
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #c3d6ca;
   border-radius: 99px;
 }
 
-input[type="range"].time-range {
-  -webkit-appearance: none;
-  appearance: none;
-  height: 8px;
-  border-radius: 99px;
-  background: linear-gradient(90deg, #cfe8d6, #1f7a4d);
+.figure-mask {
+  mask-repeat: no-repeat;
+  mask-position: center bottom;
+  mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center bottom;
+  -webkit-mask-size: contain;
 }
 
-input[type="range"].time-range::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 18px;
-  height: 18px;
-  border-radius: 99px;
-  background: #0f4d32;
-  border: 3px solid #fff;
-  box-shadow: 0 1px 4px rgba(15, 77, 50, 0.35);
-  cursor: grab;
+.stage {
+  background:
+    radial-gradient(60% 55% at 50% 42%, #ffffff 0%, #f1f6f2 70%, #e6efe9 100%);
 }
 
-@keyframes rise-in {
+@keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(10px);
+    transform: translateY(8px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
+.fade-up {
+  animation: fade-up 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
 
-.rise-in {
-  animation: rise-in 0.55s ease both;
+@keyframes drawer-in {
+  from {
+    transform: translateX(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+.drawer-in {
+  animation: drawer-in 0.28s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .fade-up,
+  .drawer-in {
+    animation: none;
+  }
 }

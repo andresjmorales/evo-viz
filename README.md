@@ -1,21 +1,17 @@
 # evo-viz
 
-A teaching story and research atlas of human evolution: a short erectus → Neanderthal → sapiens narrative, a pinch-zoom phylogenetic timeline, fossil sites on a globe, evidence grades with footnotes, rotatable 3D casts, and optional overlays for theistic-evolution models of Adam and Eve.
+An interactive atlas of human evolution: seven million years told on a globe you can spin and scrub through time, with a zoomable family tree, 3D skulls to compare, graded evidence, and optional overlays for theistic-evolution models of Adam and Eve.
 
 ## What you can do
 
-- Play a home-page story with walking figures, a time slider, and a spinning globe
-- Read the classroom three as an overlap chart, not a ladder
-- Pinch or Ctrl-scroll the full family tree from ~7 million years ago to now
-- Click a species for anatomy, behavior, discovery history, and claims
-- Open questions such as “Were Denisovans actually different from Neanderthals?”
-- Read a **Status** chip on each claim: Settled, Strong, Contested, Shaky, Speculative
-- Follow footnotes to papers, books, museum collections, and films
-- Rotate public 3D casts (Digital Atlas of Ancient Life on Sketchfab) and open Smithsonian viewers
-- Compare cranial profiles (teaching drawings, not scans)
-- Toggle overlays: Swamidass (genealogical Adam), Craig (Heidelberg-grade Adam), Kemp, Alexander, Walton, BioLogos
+- **Play the story.** Eight chapters run on a 3D globe. Fossil sites light up when their fossils date from, and dispersal routes draw themselves as the clock moves. Drag the timeline, which doubles as a miniature family tree.
+- **See the shape of it.** A simple branching diagram, nine relatives drawn to one scale, and a chart of brain size through time.
+- **Explore the family tree.** Every species on one timeline. Pinch or Ctrl/⌘-scroll to zoom into the crowded last half-million years. Interbreeding and proposed descent are drawn in.
+- **Handle the skulls.** Rotate a procedural skull for any species, set two side by side, or blend one into another.
+- **Check the evidence.** Each question carries a grade (Settled, Strong, Contested, Shaky, Speculative), the reason for it, and footnotes to papers, books, museums and lectures.
+- **Overlay Adam and Eve.** Compare where Swamidass, Craig, Kemp, Alexander, Walton and BioLogos would place a first couple, on the same timeline as the science.
 
-Status scores are editorial readings of the literature, not probabilities.
+Grades are editorial readings of the literature, not probabilities.
 
 ## Develop
 
@@ -31,13 +27,21 @@ npm run lint
 npm run build
 ```
 
+## How it is built
+
+- Next.js (App Router), React, Tailwind CSS, three.js, d3-geo
+- `src/data` holds all content: species, fossils and sites, routes, claims, sources, theories, story chapters
+- `src/lib/timeStore.ts` is the shared clock; the globe reads it every frame without re-rendering React
+- `src/lib/skull.ts` generates skulls from a dozen proportions per species (signed-distance field, meshed with surface nets)
+- `src/components/Globe.tsx` draws Natural Earth coastlines to a texture and animates routes and sites
+
 ## Image and 3D sources
 
-- Walking outlines: [PhyloPic](https://www.phylopic.org/) figures by T. Michael Keesey (CC0)
-- [Digital Atlas of Ancient Life hominid casts](https://www.digitalatlasofancientlife.org/vc/chordata/mammals/hominids/) (Hannah Teush, Cornell; Sketchfab; mostly CC BY-NC-SA)
-- [Smithsonian 3D hominin fossils](https://3d.si.edu/collections/hominin-fossils) (view on si.edu; not redistributed)
-- [African Fossils](https://africanfossils.org/) (Turkana Basin Institute / National Museums of Kenya)
-- In-app cranial profiles are original teaching drawings
+- Coastlines: [Natural Earth](https://www.naturalearthdata.com/) via `world-atlas` (public domain)
+- Silhouettes: [PhyloPic](https://www.phylopic.org/), mostly T. Michael Keesey (public domain); see `public/figures/CREDITS.md`
+- Scanned casts: [Digital Atlas of Ancient Life](https://www.digitalatlasofancientlife.org/vc/chordata/mammals/hominids/) (Cornell; Sketchfab; mostly CC BY-NC-SA), loaded on request
+- [Smithsonian 3D hominin fossils](https://3d.si.edu/collections/hominin-fossils) are linked, not redistributed
+- The in-app skulls are procedural teaching models, not scans
 
 ## License
 

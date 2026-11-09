@@ -18,18 +18,18 @@ const sourceSerif = Source_Serif_4({
 });
 
 export const metadata: Metadata = {
-  title: "evo-viz — a story of human origins",
+  title: "evo-viz · seven million years of human origins",
   description:
-    "A teaching story and research atlas of hominin evolution: walking figures, a spinning globe, evidence grades, 3D fossil casts, and optional theistic-evolution overlays.",
+    "An interactive atlas of human evolution: a globe you can spin through time, a zoomable family tree, 3D skulls to compare, evidence graded from settled to speculative, and Adam-and-Eve models overlaid on the science.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${sourceSerif.variable}`}
     >
-      <body className="flex h-full min-h-0 flex-col">{children}</body>
+      <body>{children}</body>
     </html>
   );
 }
