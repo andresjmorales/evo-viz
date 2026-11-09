@@ -41,3 +41,12 @@ export function commonsFileUrl(filename: string, width = 800): string {
 export function sketchfabEmbed(modelId: string): string {
   return `https://sketchfab.com/models/${modelId}/embed?autostart=0&ui_theme=dark&ui_infos=0&ui_watermark_link=0`;
 }
+
+/** Split a time into a number and a unit for large readouts. */
+export function timeParts(ka: number): { value: string; unit: string } {
+  if (ka >= 1000) return { value: (ka / 1000).toFixed(ka >= 3000 ? 1 : 2), unit: "million years ago" };
+  if (ka >= 10) return { value: Math.round(ka).toLocaleString("en-US"), unit: "thousand years ago" };
+  if (ka >= 0.05)
+    return { value: (Math.round(ka * 10) * 100).toLocaleString("en-US"), unit: "years ago" };
+  return { value: "Today", unit: "" };
+}

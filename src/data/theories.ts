@@ -11,10 +11,10 @@ export const theories: Theory[] = [
     summary:
       "Humans are African apes. Bipedalism comes first, brains later. Several Homo species overlap. Sapiens originate in structured African populations, then mix with Neanderthals and Denisovans. There is no recent genetic bottleneck of two people. Species names are hypotheses.",
     howToRead:
-      "This is the base map. Other overlays are readings of Adam and Eve placed onto that map, not replacements for it.",
+      "This is the base map. Other overlays are readings of Adam and Eve placed onto that map.",
     claims: [
       "Common descent with other hominins is the shared scientific frame.",
-      "Status scores on this site are editorial readings of the literature, not votes.",
+      "Status scores on this site are editorial readings of the literature.",
     ],
     critiques: [
       "Consensus hides genuine fights (heidelbergensis, Yunxian/longi, naledi behavior).",
@@ -58,9 +58,9 @@ export const theories: Theory[] = [
       "Interbreeding is required, and is theologically allowed in this model.",
     ],
     critiques: [
-      "De novo creation of a couple is a miracle claim, not a scientific result.",
+      "De novo creation of a couple is a miracle claim, outside what science can test.",
       "Catholic critics (e.g. Kemp) argue the model is still a kind of polygenism if outsiders are fully human.",
-      "Placement at 6 ka is an upper-bound illustration, not a date from bones.",
+      "Placement at 6 ka illustrates the most recent date the model allows.",
     ],
     sourceIds: [
       "swamidass-2019",
@@ -147,7 +147,7 @@ export const theories: Theory[] = [
     ],
     sourceIds: ["kemp-2011"],
     status: "speculative",
-    statusRationale: "Philosophy of compatibility, not a dated fossil hypothesis.",
+    statusRationale: "A philosophy of compatibility with no dated fossil claim.",
   },
   {
     id: "alexander",
@@ -181,7 +181,7 @@ export const theories: Theory[] = [
     ],
     sourceIds: ["alexander-2008", "swamidass-2019"],
     status: "speculative",
-    statusRationale: "A theological reading timed to the Neolithic, not a fossil ID.",
+    statusRationale: "A theological reading timed to the Neolithic.",
   },
   {
     id: "walton",
@@ -192,7 +192,7 @@ export const theories: Theory[] = [
     shortLabel: "Walton",
     color: "#b8a1d4",
     summary:
-      "Genesis is ancient Near Eastern temple text: origins of functions and roles, not a materials science paper. Adam is archetypal (and may also be historical). The “dust” and “rib” scenes are about status and kinship, not surgery. This overlay does not pin a species or a date; it refuses the demand to find Adam on a phylogenetic bar.",
+      "Genesis is ancient Near Eastern temple text about the origins of functions and roles. Adam is archetypal (and may also be historical). The “dust” and “rib” scenes are about status and kinship. This overlay does not pin a species or a date; it refuses the demand to find Adam on a phylogenetic bar.",
     howToRead:
       "No forced marker. When enabled, the timeline stays scientific and a note reminds you that Walton’s Adam is not a paleontological coordinate.",
     claims: [
@@ -205,7 +205,7 @@ export const theories: Theory[] = [
     ],
     sourceIds: ["walton-2015", "biologos-adam"],
     status: "speculative",
-    statusRationale: "Hermeneutics, not a chronological hypothesis.",
+    statusRationale: "A method of reading Genesis that makes no chronological claim.",
   },
   {
     id: "biologos",

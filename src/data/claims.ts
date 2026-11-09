@@ -6,7 +6,7 @@ export const claims: Claim[] = [
     featured: true,
     question: "Were Denisovans actually different from Neanderthals?",
     summary:
-      "Yes, as populations. Nuclear genomes show Denisovans as a sister group to Neanderthals, not a regional variant of them. They diverged on the order of 400–800 thousand years ago (genetic clocks vary). They mixed: Denisova Cave even yielded a first-generation daughter of a Neanderthal mother and a Denisovan father. Morphologically the picture is thinner, because Denisovans were named from a finger bone. The Xiahe mandible and the case that Harbin / Homo longi belongs on this branch are the main anatomical claims, and those assignments are still argued. So: genetic distinctness is settled; species rank and which skulls count as Denisovan are contested.",
+      "Yes, as populations. Nuclear genomes show Denisovans as a sister group to Neanderthals. They diverged on the order of 400–800 thousand years ago (genetic clocks vary). They mixed: Denisova Cave even yielded a first-generation daughter of a Neanderthal mother and a Denisovan father. Morphologically the picture is thinner, because Denisovans were named from a finger bone. The Xiahe mandible and the case that Harbin / Homo longi belongs on this branch are the main anatomical claims, and those assignments are still argued. So: genetic distinctness is settled; species rank and which skulls count as Denisovan are contested.",
     status: "settled",
     statusRationale:
       "The genetic split is replicated across mtDNA and high-coverage nuclear genomes. What remains open is how to name the fossils and whether “species” is the right rank for groups that clearly interbred.",
@@ -29,7 +29,7 @@ export const claims: Claim[] = [
     featured: true,
     question: "Are Denisovans the same thing as Homo longi / Dragon Man?",
     summary:
-      "Maybe. The 2021 Harbin cranium was named Homo longi. Proteomics already tied the Xiahe mandible to Denisovans. In 2025, a reconstruction of the ~1-million-year-old Yunxian 2 cranium led Feng, Stringer and colleagues to put Yunxian, Harbin, and Denisovans on one Asian “longi” clade, sister to sapiens, with Neanderthals branching earlier. That would push splits deeper than many genetic estimates. It is a major paper, not yet a textbook rewrite. Treat the identification as contested, and the deep dates as even more so.",
+      "Maybe. The 2021 Harbin cranium was named Homo longi. Proteomics already tied the Xiahe mandible to Denisovans. In 2025, a reconstruction of the ~1-million-year-old Yunxian 2 cranium led Feng, Stringer and colleagues to put Yunxian, Harbin, and Denisovans on one Asian “longi” clade, sister to sapiens, with Neanderthals branching earlier. That would push splits deeper than many genetic estimates. It is a major paper that textbooks have yet to absorb. Treat the identification as contested, and the deep dates as even more so.",
     status: "contested",
     statusRationale:
       "A single high-profile phylogenetic analysis plus a handful of fossils. Independent teams have not all signed on, and genetic split times still prefer a shallower Neanderthal–Denisovan node.",
@@ -61,7 +61,7 @@ export const claims: Claim[] = [
     featured: true,
     question: "Was there one cradle of sapiens, or many linked African populations?",
     summary:
-      "The live model is structured: several African regions contributed, connected by episodic gene flow, rather than a single isolated origin. Irhoud is in Morocco, Omo and Herto in Ethiopia, Florisbad in South Africa. Genetics of living Africans also looks like deep structure, not one bottlenecked tribe. This matters for anyone who wants to drop a single couple into “the” origin of the species.",
+      "The live model is structured: several African regions contributed, connected by episodic gene flow, rather than a single isolated origin. Irhoud is in Morocco, Omo and Herto in Ethiopia, Florisbad in South Africa. Genetics of living Africans also points to deep structure. This matters for anyone who wants to drop a single couple into “the” origin of the species.",
     status: "strong",
     statusRationale:
       "Widely adopted in reviews since Scerri et al. 2018, but the map of which regions mattered most is still being redrawn.",
@@ -97,7 +97,7 @@ export const claims: Claim[] = [
       "It is a useful label and a messy taxon. The type is a German mandible. Fossils dumped into the name include African (Bodo, Kabwe), European (Petralona, Arago), and sometimes Asian specimens. Sima de los Huesos is now usually early Neanderthal. Some researchers split African forms as H. rhodesiensis or fold them into early sapiens. Craig’s Adam model needs a last common ancestor of Neanderthals, Denisovans, and sapiens in this grade; that ancestor almost certainly existed, whether or not we keep the name heidelbergensis.",
     status: "contested",
     statusRationale:
-      "Specialists agree the Middle Pleistocene is a bush, not a ladder. They do not agree on species names.",
+      "Specialists agree the Middle Pleistocene held several branching lineages. They do not agree on species names.",
     taxonIds: ["heidelbergensis", "antecessor", "neanderthal", "sapiens"],
     sourceIds: ["rightmire-2008", "stringer-heidelberg", "stringer-2016", "craig-2021"],
     relatedClaimIds: ["lca-neand-sapiens", "craig-adam"],
@@ -131,7 +131,7 @@ export const claims: Claim[] = [
     id: "behavior-revolution",
     question: "Did modern behavior appear in a sudden European “revolution”?",
     summary:
-      "No. McBrearty and Brooks argued in 2000 that the pieces of “modern” behavior accumulate in Africa over a long Middle Stone Age. European Upper Paleolithic richness is real, but it is not the origin clock for humanity. Beads, pigment, and engraved ochre in Africa predate the classic Cro-Magnon package.",
+      "No. McBrearty and Brooks argued in 2000 that the pieces of “modern” behavior accumulate in Africa over a long Middle Stone Age. European Upper Paleolithic richness is real, and it began long after modern behaviour appeared in Africa. Beads, pigment, and engraved ochre in Africa predate the classic Cro-Magnon package.",
     status: "settled",
     statusRationale:
       "The 1980s “human revolution at 40 ka” model has been dismantled by African archaeology. Timing of particular traits still moves.",
@@ -191,7 +191,7 @@ export const claims: Claim[] = [
     id: "early-homo-mess",
     question: "When does the genus Homo begin?",
     summary:
-      "There is no clean line. Leakey’s 1964 definition bundled a slightly larger brain with stone tools. Wood and Collard later argued habilis does not belong in Homo. Spoor’s OH 7 reconstruction made habilis look more primitive. Ledi-Geraru at 2.8 Ma may be early Homo or a late australopith. Species names around 2 Ma are a hypothesis, not a barcode.",
+      "There is no clean line. Leakey’s 1964 definition bundled a slightly larger brain with stone tools. Wood and Collard later argued habilis does not belong in Homo. Spoor’s OH 7 reconstruction made habilis look more primitive. Ledi-Geraru at 2.8 Ma may be early Homo or a late australopith. Species names around 2 Ma are hypotheses.",
     status: "contested",
     statusRationale:
       "The fossils are real; the genus boundary is a human decision with several defensible cuts.",
@@ -203,7 +203,7 @@ export const claims: Claim[] = [
     id: "tools-who",
     question: "Who made the first stone tools?",
     summary:
-      "Oldowan tools appear by ~2.6 Ma in East Africa. They overlap australopiths, paranthropines, and early Homo. Lomekwi 3 (~3.3 Ma) would push toolmaking before Homo if the dates and artifacts hold; many remain cautious. Cut-marked bones at Dikika (~3.4 Ma) are also disputed. Default: early Homo is the usual suspect, not the only possible author.",
+      "Oldowan tools appear by ~2.6 Ma in East Africa. They overlap australopiths, paranthropines, and early Homo. Lomekwi 3 (~3.3 Ma) would push toolmaking before Homo if the dates and artifacts hold; many remain cautious. Cut-marked bones at Dikika (~3.4 Ma) are also disputed. Early Homo is the usual suspect; other toolmakers remain possible.",
     status: "contested",
     statusRationale:
       "Association is circumstantial until a hominin is found holding the hammerstone.",
@@ -226,7 +226,7 @@ export const claims: Claim[] = [
     id: "out-of-africa-1",
     question: "When did hominins first leave Africa?",
     summary:
-      "By about 1.8 million years ago at Dmanisi, Georgia, and not much later on Java. These people are erectus-grade, not sapiens. Earlier Levantine claims exist and are evaluated case by case. This is a different event from the sapiens dispersal tens of thousands of years ago.",
+      "By about 1.8 million years ago at Dmanisi, Georgia, and not much later on Java. These people are erectus-grade. Earlier Levantine claims exist and are evaluated case by case. This is a different event from the sapiens dispersal tens of thousands of years ago.",
     status: "strong",
     statusRationale:
       "Dmanisi and Java are securely dated in this ballpark. The exact first footfall is not.",
@@ -250,7 +250,7 @@ export const claims: Claim[] = [
     id: "fire",
     question: "When did humans control fire?",
     summary:
-      "Habitual fire is solid in the last few hundred thousand years. Wonderwerk Cave in South Africa has a strong ~1 Ma claim. Earlier “hearths” are often natural burns. Anatomy of erectus (smaller guts, bigger bodies) is sometimes read as cooking, which is a hypothesis, not a photograph.",
+      "Habitual fire is solid in the last few hundred thousand years. Wonderwerk Cave in South Africa has a strong ~1 Ma claim. Earlier “hearths” are often natural burns. Anatomy of erectus (smaller guts, bigger bodies) is sometimes read as cooking, which remains a hypothesis.",
     status: "contested",
     statusRationale:
       "Late fire is settled; the date of first control is a sliding window.",
@@ -261,7 +261,7 @@ export const claims: Claim[] = [
     id: "island-dwarfs",
     question: "What is Homo floresiensis?",
     summary:
-      "A real, tiny Late Pleistocene hominin, not a diseased modern human. Leading model: island dwarfism from an erectus-like ancestor. Alternative: a more primitive (habilis-grade) Asian remnant. Related: H. luzonensis in the Philippines, known from teeth and foot bones, another island experiment.",
+      "A real, tiny Late Pleistocene hominin. The idea that the bones belonged to a diseased modern human has been abandoned. Leading model: island dwarfism from an erectus-like ancestor. Alternative: a more primitive (habilis-grade) Asian remnant. Related: H. luzonensis in the Philippines, known from teeth and foot bones, another island experiment.",
     status: "strong",
     statusRationale:
       "Pathology model has collapsed. Ancestor and dwarfing mechanism remain discussed.",
@@ -272,7 +272,7 @@ export const claims: Claim[] = [
     id: "naledi-recent",
     question: "How can Homo naledi be so recent and so small-brained?",
     summary:
-      "Because evolution is not a ladder. Dates of ~335–236 ka put naledi alongside early sapiens. A small brain in the genus Homo at that date surprised everyone and is now a fact to accommodate, not a reason to throw out the dates.",
+      "Because lineages change at different rates, and old forms can persist beside new ones. Dates of ~335–236 ka put naledi alongside early sapiens. A small brain in the genus Homo at that date surprised everyone and is now an accepted fact.",
     status: "strong",
     statusRationale:
       "Direct dates from Rising Star are the best evidence. Phylogenetic placement is still discussed.",
@@ -324,7 +324,7 @@ export const claims: Claim[] = [
       "Swamidass’s distinction: genetic ancestry (DNA segments) is not genealogical ancestry (places on a family tree). Rohde, Olson and Chang showed that genealogical ancestry becomes universal surprisingly fast. Under models of realistic migration, a couple living in the Middle East as recently as ~6,000 years ago could be genealogical ancestors of all living people, while contributing essentially no distinctive genes, if their descendants mixed with a large existing human population. This does not prove such a couple existed. It removes one popular scientific objection to a recent de novo couple, provided one accepts people “outside the garden.”",
     status: "strong",
     statusRationale:
-      "The population-genetic math is mainstream. The de novo couple is a theological hypothesis sitting on top of it, not a paleontological finding.",
+      "The population-genetic math is mainstream. The de novo couple is a theological hypothesis sitting on top of it.",
     taxonIds: ["sapiens"],
     sourceIds: [
       "swamidass-2019",
@@ -343,7 +343,7 @@ export const claims: Claim[] = [
       "William Lane Craig reads Genesis 1–11 as mytho-history and then asks where a primordial pair could sit so that Neanderthals, Denisovans, and sapiens all count as their descendants and as image-bearers. He picks large-brained Middle Pleistocene humans, usually called H. heidelbergensis, around 1.0–0.75 Ma, and allows a biological plus spiritual “renovation” of two individuals. Population genetics does not rule out a pair that far back (the recent-pair bottleneck is the one genetics forbids). The weaknesses are the squishy taxon, the moving split dates (see Yunxian 2025), and the theological load placed on archaeological “humanity” tests.",
     status: "speculative",
     statusRationale:
-      "A coherent philosophical placement, not a scientific inference. Compatible with a deep pair; not demanded by fossils or genes.",
+      "A coherent philosophical placement. Compatible with a deep pair; not demanded by fossils or genes.",
     taxonIds: ["heidelbergensis", "neanderthal", "denisovan", "sapiens"],
     sourceIds: [
       "craig-2021",
