@@ -6,11 +6,11 @@ export const metadata: Metadata = { title: "About · evo-viz" };
 const SECTIONS: [string, string][] = [
   [
     "What this is",
-    "evo-viz is a teaching tool first and a research notebook second. The home page tells the story in eight chapters on a globe you can spin and scrub through time. Below it are the full family tree, a skull lab, and every claim graded and footnoted.",
+    "evo-viz is a teaching tool first and a research notebook second. The home page tells the story in eight chapters on a globe you can spin and scrub through time. Below it are the full family tree, a skull lab, and every claim graded and footnoted. The Field notes page sets the same material out as one long read with sources in the margin, and the notebook keeps what you save, with your own notes, in your browser.",
   ],
   [
     "How the grades work",
-    "Each claim carries one of five grades, from Settled to Speculative. They are editorial readings of how the claim currently sits in the literature. They are not votes and not probabilities. Every grade comes with a sentence explaining it and links to the papers, books, museum pages and lectures behind it.",
+    "Each claim carries one of five grades, from Settled to Speculative. They are editorial readings of how the claim currently sits in the literature and carry no statistical weight. Every grade comes with a sentence explaining it and links to the papers, books, museum pages and lectures behind it.",
   ],
   [
     "Dates, routes and the globe",

@@ -19,7 +19,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Brain size in the ape range. A forward-placed foramen magnum is the main anatomical hint of bipedality, but the specimen is distorted and there is no associated pelvis or unambiguous femur published with the type.",
     behavior:
-      "Unknown. Environment reconstructions point to a mosaic of woodland, grassland, and water, not open savanna alone.",
+      "Unknown. Environment reconstructions point to a mosaic of woodland, grassland, and water.",
     discovery:
       "Announced in 2002 by Michel Brunet’s team from Toros-Menalla, Djurab Desert, Chad. The nickname Toumaï means “hope of life” in the local Daza language.",
     claimIds: ["sahel-hominin", "bipedalism-first"],
@@ -236,11 +236,11 @@ export const taxa: Taxon[] = [
     sites: ["olduvai", "koobi-fora"],
     regions: ["Tanzania", "Kenya", "Ethiopia", "Malawi"],
     summary:
-      "An East African “robust” australopith with a huge sagittal crest, flaring cheekbones, and molar teeth like millstones. DNA does not exist. It is a specialist side branch, not a human ancestor, overlapping in time and place with early Homo.",
+      "An East African “robust” australopith with a huge sagittal crest, flaring cheekbones, and molar teeth like millstones. DNA does not exist. It is a specialist side branch that overlapped in time and place with early Homo and left no descendants.",
     anatomy:
       "Hyper-robust chewing complex. Brain still ~500 cc. Postcrania, where known, are bipedal.",
     behavior:
-      "Stable-isotope work suggests a diet heavy in C4 resources (grasses, sedges, or animals that ate them), not simply hard nuts. The nickname is partly misleading.",
+      "Stable-isotope work suggests a diet heavy in C4 resources (grasses, sedges, or animals that ate them), so hard nuts were at most part of the menu. The nickname is partly misleading.",
     discovery:
       "OH 5 (“Zinjanthropus”) found by Mary Leakey at Olduvai in 1959; later reassigned to Paranthropus/Australopithecus boisei.",
     claimIds: ["paranthropus-side"],
@@ -303,7 +303,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "OH 7’s reconstructed jaw is surprisingly primitive and long. Cranial capacity overlaps late australopiths and early erectus. Limb proportions still relatively long-armed.",
     behavior:
-      "Oldowan cores and flakes appear in East Africa by ~2.6 Ma, slightly before most habilis fossils. Tool use is inferred, not proven for every specimen.",
+      "Oldowan cores and flakes appear in East Africa by ~2.6 Ma, slightly before most habilis fossils. Tool use is inferred for most specimens.",
     discovery:
       "Named in 1964 by Louis Leakey, Phillip Tobias, and John Napier, expanding the definition of Homo to include a smaller brain if tools were present.",
     claimIds: ["early-homo-mess", "tools-who"],
@@ -536,7 +536,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Long, low cranium, huge nose, midface projection, occipital bun, no chin, barrel chest, short distal limbs. Brain size often exceeds the modern mean. Inner ear and pelvis also distinctive.",
     behavior:
-      "Mousterian tools, hafting, fire, hunting of prime-age ungulates. Ornament and pigment use is documented; the “dumb brute” cartoon is dead. Burial is plausible at some sites and contested at others. Language capacity is inferred, not observed.",
+      "Mousterian tools, hafting, fire, hunting of prime-age ungulates. Ornament and pigment use is documented; the “dumb brute” cartoon is dead. Burial is plausible at some sites and contested at others. Language capacity is an inference from anatomy and genes.",
     discovery:
       "Feldhofer Cave, Neander Valley, 1856, was the first fossil recognized as a distinct ancient human. The genome was sequenced in 2010.",
     claimIds: [

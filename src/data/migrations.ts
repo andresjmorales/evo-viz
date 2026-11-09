@@ -24,7 +24,7 @@ export const migrations: Migration[] = [
     ],
     status: "strong",
     notes:
-      "Dmanisi, Georgia, at about 1.8 million years is the best-dated early exit. These are small-brained, erectus-grade people, not sapiens.",
+      "Dmanisi, Georgia, at about 1.8 million years is the best-dated early exit. The people were small-brained and erectus-grade.",
     sourceIds: ["lordkipanidze-2013", "anton-2003"],
   },
   {
@@ -237,7 +237,7 @@ export const migrations: Migration[] = [
     ],
     status: "contested",
     notes:
-      "The oldest sapiens-like fossils are in Morocco, not East Africa. The line shows connection between regions, not a known direction of travel.",
+      "The oldest sapiens-like fossils come from Morocco, far from the East African sites long treated as the cradle. The line marks contact between regions; which way people moved is unknown.",
     sourceIds: ["hublin-2017", "scerri-2018"],
   },
   {

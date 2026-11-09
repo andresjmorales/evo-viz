@@ -44,9 +44,10 @@ const POINTS = [
 export function ShortVersion({ onOpen }: { onOpen: OpenFn }) {
   return (
     <section id="short" className="mx-auto max-w-[1240px] px-5 pt-24 sm:px-8">
-      <SectionHeading kicker="The short version" title="Not a ladder. A branching, tangled bush.">
-        The famous picture of an ape straightening up into a man gets the shape
-        wrong. Here is the same story with its real shape.
+      <SectionHeading kicker="The short version" title="A bush with tangled branches">
+        The famous picture shows a single file of figures, each replacing the
+        last. The real history branched, and several branches lived side by
+        side.
       </SectionHeading>
 
       <div className="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">

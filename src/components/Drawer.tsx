@@ -18,6 +18,8 @@ import { commonsFileUrl, formatKa, formatRange, sketchfabEmbed, STATUS_BLURB } f
 import { THEORY_COLOR, taxonColor, taxonSoft } from "@/lib/palette";
 import { skullParams } from "@/lib/skull";
 import { timeStore } from "@/lib/timeStore";
+import { notebook, useNotebook } from "@/lib/notebook";
+import { Ref, Rich } from "./Popups";
 import { notice } from "./SkullLab";
 import { Figure, StatusBadge, type OpenFn, type PanelTarget } from "./ui";
 
@@ -42,7 +44,7 @@ function Sources({ ids }: { ids: string[] }) {
       <ol className="mt-3 space-y-2.5">
         {list.map((s, i) => (
           <li key={s.id} className="flex gap-3 text-[13px] leading-snug">
-            <span className="w-4 shrink-0 text-right tabular-nums text-[var(--faint)]">{i + 1}</span>
+            <Ref target={{ kind: "source", id: s.id }} className="w-5 shrink-0 text-right tabular-nums text-[var(--faint)]">{i + 1}</Ref>
             <span className="min-w-0">
               <a href={s.url} target="_blank" rel="noreferrer" className="font-medium text-[var(--ink)] underline decoration-[var(--line)] decoration-2 underline-offset-[3px] hover:decoration-[var(--green)]">
                 {s.title}
@@ -69,25 +71,25 @@ function StatusBlock({ status, rationale }: { status: Parameters<typeof StatusBa
       </div>
       <p className="mt-2.5 text-[13.5px] leading-relaxed text-[var(--muted)]">
         <strong className="font-semibold text-[var(--ink)]">Why this grade. </strong>
-        {rationale}
+        <Rich text={rationale} />
       </p>
     </div>
   );
 }
 
-function TaxonChip({ id, onOpen }: { id: string; onOpen: OpenFn }) {
+function TaxonChip({ id }: { id: string; onOpen?: OpenFn }) {
   const t = getTaxon(id);
   if (!t) return null;
   return (
-    <button
-      type="button"
-      onClick={() => onOpen({ kind: "taxon", id })}
-      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12.5px] italic transition hover:brightness-95"
-      style={{ background: taxonSoft(id), color: taxonColor(id) }}
-    >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ background: taxonColor(id) }} />
-      {t.name}
-    </button>
+    <Ref target={{ kind: "taxon", id }} plain className="inline-flex cursor-pointer transition hover:brightness-95">
+      <span
+        className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[12.5px] italic"
+        style={{ background: taxonSoft(id), color: taxonColor(id) }}
+      >
+        <span className="h-1.5 w-1.5 rounded-full" style={{ background: taxonColor(id) }} />
+        {t.name}
+      </span>
+    </Ref>
   );
 }
 
@@ -231,7 +233,7 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
 
       {tab === "about" ? (
         <div className="mt-5 space-y-5 text-[15px] leading-[1.65] text-[var(--muted)]">
-          <p className="text-[16px] text-[var(--ink)]">{t.summary}</p>
+          <p className="text-[16px] text-[var(--ink)]"><Rich text={t.summary} skip={id} /></p>
           <section>
             <h3 className="mb-1.5 text-[14px] font-semibold text-[var(--ink)]">What to notice in the skull</h3>
             <ul className="space-y-1">
@@ -245,15 +247,15 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
           </section>
           <section>
             <h3 className="mb-1 text-[14px] font-semibold text-[var(--ink)]">Anatomy</h3>
-            <p>{t.anatomy}</p>
+            <p><Rich text={t.anatomy} skip={id} /></p>
           </section>
           <section>
             <h3 className="mb-1 text-[14px] font-semibold text-[var(--ink)]">Behaviour and setting</h3>
-            <p>{t.behavior}</p>
+            <p><Rich text={t.behavior} skip={id} /></p>
           </section>
           <section>
             <h3 className="mb-1 text-[14px] font-semibold text-[var(--ink)]">How it was found</h3>
-            <p>{t.discovery}</p>
+            <p><Rich text={t.discovery} skip={id} /></p>
           </section>
           {parent ? (
             <p className="rounded-2xl bg-[var(--panel)] p-4 text-[13.5px]">
@@ -328,7 +330,16 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         <p className="kicker text-[var(--green)]">Question</p>
         <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{c.question}</h2>
         <StatusBlock status={c.status} rationale={c.statusRationale} />
-        <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">{c.summary}</p>
+        <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">
+          <Rich text={c.summary} />
+          <sup className="ml-1 whitespace-nowrap text-[11px]">
+            {c.sourceIds.map((sid, i) => (
+              <Ref key={sid} target={{ kind: "source", id: sid }} className="mx-[1px] px-[1px] leading-[1.5] text-[var(--green)]">
+                {i + 1}
+              </Ref>
+            ))}
+          </sup>
+        </p>
         {c.taxonIds?.length ? (
           <div className="mt-5 flex flex-wrap gap-1.5">
             {c.taxonIds.map((id) => (
@@ -344,10 +355,10 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
               {c.relatedClaimIds.map((id) => {
                 const r = getClaim(id);
                 return r ? (
-                  <button key={id} type="button" onClick={() => onOpen({ kind: "claim", id })} className="flex w-full items-center gap-3 rounded-2xl border border-[var(--line)] px-4 py-3 text-left text-[14px] text-[var(--ink)] transition hover:border-[var(--green)]">
+                  <Ref key={id} target={{ kind: "claim", id }} plain className="flex w-full items-center gap-3 rounded-2xl border border-[var(--line)] px-4 py-3 text-left text-[14px] text-[var(--ink)] transition hover:border-[var(--green)]">
                     <span className="min-w-0 flex-1">{r.question}</span>
                     <StatusBadge status={r.status} compact />
-                  </button>
+                  </Ref>
                 ) : null;
               })}
             </div>
@@ -368,7 +379,7 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         </p>
         <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{t.name}</h2>
         <StatusBlock status={t.status} rationale={t.statusRationale} />
-        <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">{t.summary}</p>
+        <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]"><Rich text={t.summary} /></p>
         {t.overlay ? (
           <div className="mt-5 rounded-2xl border-l-4 bg-[var(--panel)] p-4 text-[13.5px] leading-relaxed text-[var(--muted)]" style={{ borderColor: color }}>
             <strong className="font-semibold text-[var(--ink)]">On the timeline: </strong>
@@ -382,7 +393,7 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
             <h3 className="text-[14px] font-semibold text-[var(--ink)]">What it claims</h3>
             <ul className="mt-2 space-y-2 text-[14px] leading-relaxed text-[var(--muted)]">
               {t.claims.map((c) => (
-                <li key={c} className="flex gap-2.5"><span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} />{c}</li>
+                <li key={c} className="flex gap-2.5"><span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: color }} /><span><Rich text={c} /></span></li>
               ))}
             </ul>
           </section>
@@ -390,7 +401,7 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
             <h3 className="text-[14px] font-semibold text-[var(--ink)]">Where it is under pressure</h3>
             <ul className="mt-2 space-y-2 text-[14px] leading-relaxed text-[var(--muted)]">
               {t.critiques.map((c) => (
-                <li key={c} className="flex gap-2.5"><span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#e8703a]" />{c}</li>
+                <li key={c} className="flex gap-2.5"><span className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-[#e8703a]" /><span><Rich text={c} /></span></li>
               ))}
             </ul>
           </section>
@@ -433,7 +444,7 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
       <p className="kicker" style={{ color: taxonColor(m.taxonId) }}>Journey · {formatRange(m.startKa, m.endKa)}</p>
       <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{m.label}</h2>
       <StatusBlock status={m.status} rationale="Routes are the least certain thing on the globe. Dated sites fix where people were; the line between them is the simplest path over land that fits." />
-      <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">{m.notes}</p>
+      <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]"><Rich text={m.notes} /></p>
       <div className="mt-5 flex flex-wrap items-center gap-2">
         <TaxonChip id={m.taxonId} onOpen={onOpen} />
         <button
@@ -467,6 +478,9 @@ export function Drawer({
   const target = stack[stack.length - 1];
   const scroll = useRef<HTMLDivElement>(null);
   const key = target ? `${target.kind}:${target.id}` : "";
+  const nb = useNotebook();
+  const [copied, setCopied] = useState(false);
+  const saved = !!target && nb.items.some((i) => i.kind === target.kind && i.id === target.id);
   useEffect(() => {
     scroll.current?.scrollTo({ top: 0 });
   }, [key]);
@@ -493,6 +507,32 @@ export function Drawer({
             </button>
           ) : null}
           <span className="flex-1" />
+          <button
+            type="button"
+            onClick={() => {
+              navigator.clipboard
+                ?.writeText(`${window.location.origin}${window.location.pathname}#/${target.kind}/${target.id}`)
+                .then(() => {
+                  setCopied(true);
+                  window.setTimeout(() => setCopied(false), 1500);
+                })
+                .catch(() => {});
+            }}
+            className="rounded-full px-3 py-1.5 text-[12.5px] font-medium text-[var(--muted)] transition hover:bg-[var(--panel)]"
+          >
+            {copied ? "Link copied" : "Copy link"}
+          </button>
+          <button
+            type="button"
+            aria-pressed={saved}
+            onClick={() => notebook.toggle(target.kind, target.id)}
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[12.5px] font-medium transition ${
+              saved ? "bg-[var(--green-soft)] text-[var(--green)]" : "text-[var(--muted)] hover:bg-[var(--panel)]"
+            }`}
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill={saved ? "currentColor" : "none"} stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"><path d="M3.5 1.5h9v13l-4.5-3-4.5 3z" /></svg>
+            {saved ? "Saved" : "Save"}
+          </button>
           <button type="button" onClick={onClose} aria-label="Close panel" className="grid h-9 w-9 place-items-center rounded-full text-[var(--muted)] transition hover:bg-[var(--panel)]">
             <svg width="14" height="14" viewBox="0 0 14 14" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><path d="M1 1l12 12M13 1 1 13" /></svg>
           </button>

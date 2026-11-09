@@ -54,7 +54,7 @@ export const fossils: Fossil[] = [
     region: "Central Africa",
     ageKa: 7000,
     notes:
-      "Type cranium, distorted. Casts are what most of us see. Rotate the Digital Atlas model; it is a cast, not the original.",
+      "Type cranium, distorted. Casts are what most of us see. Rotate the Digital Atlas model; it shows a cast of the original.",
     viewers: [
       {
         type: "sketchfab",
@@ -303,7 +303,7 @@ export const fossils: Fossil[] = [
     site: "Mauer, Germany",
     region: "Europe",
     ageKa: 600,
-    notes: "The name-bearer of H. heidelbergensis (1908). A jaw, not a face.",
+    notes: "The name-bearer of H. heidelbergensis (1908). Only the jaw is known.",
     viewers: [
       {
         type: "sketchfab",
@@ -363,7 +363,7 @@ export const fossils: Fossil[] = [
     site: "France",
     region: "Europe",
     ageKa: 50,
-    notes: "Boule’s pathological old man, once used to paint Neanderthals as stooped brutes. Anatomy plus pathology; the cartoon was the reconstruction, not the bones.",
+    notes: "Boule’s pathological old man, once used to paint Neanderthals as stooped brutes. Anatomy plus pathology; the stooped cartoon came from a flawed reconstruction.",
     viewers: [
       {
         type: "smithsonian",
@@ -430,7 +430,7 @@ export const fossils: Fossil[] = [
     site: "Morocco",
     region: "North Africa",
     ageKa: 315,
-    notes: "Face relatively modern, braincase still elongated. Pushed sapiens origins across the continent, not just East Africa.",
+    notes: "Face relatively modern, braincase still elongated. Pushed sapiens origins across the continent, beyond East Africa.",
     viewers: [],
   },
   {

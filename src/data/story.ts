@@ -37,7 +37,7 @@ export const CHAPTERS: Chapter[] = [
     ka: 2800,
     kicker: "2.8 – 1.9 million years ago",
     title: "The family becomes a bush",
-    body: "Several kinds of hominin now share Africa. Heavy-jawed Paranthropus chews tough plants. Early Homo has smaller teeth, a somewhat larger brain, and stone tools. It is a branching experiment, not a single line.",
+    body: "Several kinds of hominin now share Africa. Heavy-jawed Paranthropus chews tough plants. Early Homo has smaller teeth, a somewhat larger brain, and stone tools. Several branches of the family are alive at once.",
     taxonIds: ["africanus", "boisei", "robustus", "habilis", "rudolfensis"],
     claimId: "early-homo-mess",
     focus: [-6, 32],

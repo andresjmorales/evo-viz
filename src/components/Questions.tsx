@@ -131,10 +131,9 @@ export function Theories({
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
         <SectionHeading kicker="Faith & science" title="Where would Adam and Eve fit?">
           Several Christian thinkers accept the science above and ask how a
-          historical or archetypal Adam and Eve might fit within it. These are
-          theological proposals laid over the timeline, not scientific
-          findings, and each is graded on how well its scientific footing
-          holds.
+          historical or archetypal Adam and Eve might fit within it. Each is a
+          theological proposal laid over the timeline, graded here on how
+          well its scientific footing holds.
         </SectionHeading>
 
         <div className="mt-9 overflow-hidden rounded-3xl border border-[var(--line)] bg-white">
