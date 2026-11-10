@@ -9,6 +9,7 @@ import type { Topology } from "topojson-specification";
 import { sites } from "@/data/fossils";
 import { migrations } from "@/data/migrations";
 import { taxa } from "@/data/taxa";
+import { seaLevel } from "@/lib/climate";
 import { latLonToVec3, spherePath } from "@/lib/geo";
 import { taxonGlow } from "@/lib/palette";
 import { timeStore } from "@/lib/timeStore";
@@ -17,8 +18,11 @@ const taxonById = Object.fromEntries(taxa.map((t) => [t.id, t]));
 
 const ARC_VERT = /* glsl */ `
   varying vec2 vUv;
+  attribute float aSea;
+  varying float vSea;
   void main() {
     vUv = uv;
+    vSea = aSea;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `;
@@ -27,10 +31,14 @@ const ARC_FRAG = /* glsl */ `
   uniform float uProgress;
   uniform float uOpacity;
   uniform float uTime;
+  uniform float uLen;
   varying vec2 vUv;
+  varying float vSea;
   void main() {
     if (vUv.x > uProgress) discard;
-    float flow = 0.72 + 0.28 * sin(vUv.x * 70.0 - uTime * 3.0);
+    // Water crossings are drawn dashed.
+    if (vSea > 0.5 && fract(vUv.x * uLen * 0.9) > 0.55) discard;
+    float flow = 0.72 + 0.28 * sin(vUv.x * uLen * 0.6 - uTime * 3.0);
     float head = smoothstep(0.12, 0.0, uProgress - vUv.x) * step(uProgress, 0.999);
     vec3 col = mix(uColor, vec3(1.0), head * 0.7);
     gl_FragColor = vec4(col, uOpacity * (flow + head));
@@ -48,10 +56,20 @@ const GLOBE_VERT = /* glsl */ `
 `;
 const GLOBE_FRAG = /* glsl */ `
   uniform sampler2D uMap;
+  uniform sampler2D uShelf;
+  uniform float uDrop;
+  uniform float uHasShelf;
   varying vec2 vUv;
   varying vec3 vNormal;
   void main() {
     vec3 base = texture2D(uMap, vUv).rgb;
+    // Sea floor shallower than the current fall in sea level becomes land.
+    float shallow = texture2D(uShelf, vUv).r;
+    float cut = 1.0 - uDrop / 140.0;
+    float exposed = smoothstep(cut, cut + 0.035, shallow) * step(1.0, uDrop) * uHasShelf;
+    // Texture values arrive in linear light: ocean green is near 0.05, land above 0.2.
+    float isLand = smoothstep(0.09, 0.15, base.g);
+    base = mix(base, vec3(0.3, 0.52, 0.3), exposed * (1.0 - isLand));
     float light = max(dot(vNormal, normalize(vec3(-0.45, 0.55, 0.7))), 0.0);
     float shade = mix(0.5, 1.12, pow(light, 0.85));
     float rim = pow(1.0 - max(vNormal.z, 0.0), 3.0);
@@ -205,7 +223,12 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
     });
 
     const globeMat = new THREE.ShaderMaterial({
-      uniforms: { uMap: { value: null } },
+      uniforms: {
+        uMap: { value: null },
+        uShelf: { value: null },
+        uDrop: { value: 0 },
+        uHasShelf: { value: 0 },
+      },
       vertexShader: GLOBE_VERT,
       fragmentShader: GLOBE_FRAG,
     });
@@ -236,12 +259,22 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       })
       .catch(() => setFailed(true));
 
+    // Depth of the shallow sea floor, used to redraw coasts as sea level falls.
+    const shelfTex = new THREE.TextureLoader().load("/geo/shelf.png", () => {
+      globeMat.uniforms.uHasShelf.value = 1;
+    });
+    shelfTex.colorSpace = THREE.NoColorSpace;
+    shelfTex.generateMipmaps = false;
+    shelfTex.minFilter = THREE.LinearFilter;
+    globeMat.uniforms.uShelf.value = shelfTex;
+
     // Routes
     const dot = dotTexture();
     const ring = dotTexture(true);
     const arcs = migrations.map((m) => {
-      const pts = spherePath(m.path, 1.012, 180);
+      const { points: pts, sea } = spherePath(m.path, 1.012, m.sea);
       const curve = new THREE.CatmullRomCurve3(pts);
+      const segs = pts.length - 1;
       const color = new THREE.Color(taxonGlow(m.taxonId));
       const mat = new THREE.ShaderMaterial({
         uniforms: {
@@ -249,16 +282,22 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
           uProgress: { value: 0 },
           uOpacity: { value: 1 },
           uTime: { value: 0 },
+          uLen: { value: segs },
         },
         vertexShader: ARC_VERT,
         fragmentShader: ARC_FRAG,
         transparent: true,
         depthWrite: false,
       });
-      const mesh = new THREE.Mesh(
-        new THREE.TubeGeometry(curve, 180, 0.0075, 6, false),
-        mat,
-      );
+      const geo = new THREE.TubeGeometry(curve, segs, 0.0075, 6, false);
+      const uvs = geo.getAttribute("uv");
+      const seaAttr = new Float32Array(uvs.count);
+      for (let i = 0; i < uvs.count; i++) {
+        const u = uvs.getX(i);
+        seaAttr[i] = sea.some(([a, b]) => u >= a && u <= b) ? 1 : 0;
+      }
+      geo.setAttribute("aSea", new THREE.BufferAttribute(seaAttr, 1));
+      const mesh = new THREE.Mesh(geo, mat);
       scene.add(mesh);
       const head = new THREE.Sprite(
         new THREE.SpriteMaterial({
@@ -316,11 +355,18 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
     const clock = new THREE.Clock();
     let raf = 0;
 
+    // Skip rendering while the globe is scrolled out of view.
+    let onScreen = true;
+    const io = new IntersectionObserver(([e]) => (onScreen = e.isIntersecting));
+    io.observe(el);
+
     const frame = () => {
       raf = requestAnimationFrame(frame);
+      if (!onScreen) return;
       const t = clock.getElapsedTime();
       const ka = timeStore.ka;
       const hl = highlightRef.current;
+      globeMat.uniforms.uDrop.value = Math.max(0, -seaLevel(ka));
 
       if (flyTo.current) {
         camDir.copy(camera.position).normalize();
@@ -413,6 +459,7 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       disposed = true;
       cancelAnimationFrame(raf);
       ro.disconnect();
+      io.disconnect();
       controls.dispose();
       scene.traverse((o) => {
         const mesh = o as THREE.Mesh;
@@ -423,6 +470,7 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       dot.dispose();
       ring.dispose();
       (globeMat.uniforms.uMap.value as THREE.Texture | null)?.dispose();
+      shelfTex.dispose();
       renderer.dispose();
       renderer.domElement.remove();
       layer.replaceChildren();

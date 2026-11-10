@@ -2,42 +2,53 @@
 
 Temporary working list. Delete this file once the items are done or moved to issues.
 
-## Features, in suggested order
+## Done since the first version of this list
 
-1. **Ice-age coastlines on the globe.** Show Sundaland, Sahul, Beringia and Doggerland when sea level was low. Most routes only make sense with them. Needs a bathymetry source (for example the Natural Earth 200 m contour, or a −120 m contour from ETOPO) drawn into the globe texture in `src/components/Globe.tsx`, switched by the clock.
-2. **Climate strip under the timeline.** Plot the published ice-age temperature record (the LR04 benthic δ18O stack) beneath the family tree and scrubber, so dispersals and extinctions can be read against glacial cycles.
-3. **Tools and behaviour lane on the family tree.** Oldowan, Acheulean, Mousterian, controlled fire, burial, pigment and art, as dated bars in `src/components/FamilyTree.tsx`, each linked to a graded question.
-4. **Sentence-level citations.** Let a sentence in a claim or species summary point at the specific source that supports it, instead of listing sources for the whole answer. Needs a markup convention in `src/data/claims.ts` and `src/data/taxa.ts`, and support in `Rich` (`src/components/Popups.tsx`).
-5. **"Your DNA" explainer.** How much Neanderthal and Denisovan ancestry people in each region carry, and what a few of the inherited variants do.
-6. **Self-test mode.** Identify the skull, put species in order, place a fossil on the map.
+- Ice-age coastlines on the globe, driven by measured sea-floor depth and the sea-level record
+- Climate strip and a tools-and-behaviour lane on the family tree
+- Sentence-level citations in every question, route and method note
+- "What the others left in us" DNA section
+- Self-test quiz
+- Ten "how we know" method primers
+- Ten new graded questions, covering the species that had none and the thin topics (climate, diet, ancient DNA, first Americans, earliest art)
+- Routes redrawn to stay on land, with a repeatable check (`npm run check:routes`)
+- 68 new sources, each verified against Crossref; two wrong DOIs among the original sources corrected (Senut 2001, Ji 2021)
 
-## Information and education gaps
+## Still to do
 
-- **Fossil media is uneven.** Only 13 of the 29 fossils have a 3D scan linked and only two have a photo. The two Wikimedia photo filenames in `src/data/fossils.ts` were guessed and carry a "see Commons" licence note; confirm or replace them.
-- **Thin topics.** Almost nothing yet on stone tools, climate, diet, or how the ancient-DNA evidence actually works (sequencing, contamination, dating).
-- **Species with few questions.** Several species have one or no graded questions attached (for example *Orrorin*, *Au. anamensis*, *Au. sediba*, *H. rudolfensis*, *H. antecessor*).
-- **Uncited material to fact-check.** These were written from general knowledge and cite only sources already in the list, or none:
-  - route waypoints, dates and notes in `src/data/migrations.ts` (the remote-Pacific and Americas routes lean on one general review)
-  - site date windows (`ka`) in `src/data/fossils.ts`
-  - glossary definitions in `src/data/glossary.ts`
-  - mid-range stature figures in `src/data/figures.ts`
-  - skull proportions in `src/lib/skull.ts`
-- **Missing sources.** Add primary references for White Sands, Monte Verde, Bacho Kiro, early Java dates, Flores tools, and the settlement of Polynesia.
-- **No worked examples of method.** Nothing yet explains how a fossil is dated, how a species is named, or how a split date is estimated. A short "how we know" primer per method would help learners.
+### Content
 
-## Skulls
+- **Fossil media.** Only 13 of the 29 fossils have a 3D scan linked and only two have a photo. The two Wikimedia photo filenames in `src/data/fossils.ts` were guessed and carry a "see Commons" licence note; confirm or replace them, and add verified photos (with author and licence) for the rest.
+- **Fact-check the remaining unsourced numbers.**
+  - Site date windows (`ka`) in `src/data/fossils.ts`
+  - Glossary definitions in `src/data/glossary.ts`
+  - Mid-range stature figures in `src/data/figures.ts` (Will, Pablos & Stock 2017 is now in the source list as `will-2017` and is the place to check them)
+  - Skull proportions in `src/lib/skull.ts`
+  - Species summaries in `src/data/taxa.ts` have no inline citations yet; only questions, routes, methods and the tools lane do
+- **Non-DOI sources are unverified.** Books, museum pages, lectures and essays in `src/data/sources.ts` were not checked the way the papers were. The Alexander 2008 entry links to a publisher home page.
+- **Schöningen spears.** The tools lane marks them at about 300 thousand years and says a younger age has been argued. Find and cite the re-dating study, then move the marker if warranted.
+- **DNA section ranges.** The Neanderthal share for New Guinea and Australia and the "under 0.2%" Denisovan trace in East Asia are approximations from the cited papers; tighten them against the original tables.
+- **More behaviour entries.** Farming, hafting and adhesives, the bow, and seafaring are not on the tools lane.
 
-- Lower jaws are the weakest part of the procedural models (blocky body, plank-like ramus).
+### Globe
+
+- **Ice sheets are not drawn.** At the last glacial maximum the globe shows Hudson Bay and the Barents shelf as dry land when they were under ice, and the route into the Americas crosses where the ice stood.
+- **Sea level before 800 thousand years ago** is scaled from the oxygen-isotope record and is rough. Nothing is shown before 5.3 million years.
+- **Route direction and choice.** Routes now stay on land, but each is still one plausible path. The out-of-Africa line follows the southern coast only; the northern (Nile and Sinai) alternative is not drawn.
+
+### Skulls
+
+- Lower jaws are still the weakest part of the procedural models.
 - Look for scans with licences that allow redistribution (MorphoSource, African Fossils) to replace the procedural skull for key specimens.
-- Smithsonian hominin pages block framing, so they stay as links unless their Voyager viewer can be self-hosted with permitted models.
 
-## Embeds and outside data
+### Quiz
 
-- OneZoom is embedded and shows its own cookie prompt on first load. It covers living species only.
-- TimeTree and Open Tree of Life could supply split-date estimates with their studies. Open Tree has an open API; whether TimeTree does is unchecked.
+- Questions are generated from the data, so some are easy or oddly paired. A hand-written set with misconception-based distractors would teach more.
+- No progress is saved between visits.
 
-## Not yet tested
+### Not yet tested
 
-- Hover notes, the notebook and pinch-zoom on a real touch device
-- Sketchfab embeds loading for real visitors
+- Hover notes, the notebook, the quiz and pinch-zoom on a real touch device
+- Sketchfab and OneZoom embeds for real visitors
 - Browsers other than Chromium
+- Frame rate on a low-end phone with the new shelf texture (4096 px wide)

@@ -14,7 +14,7 @@ const SECTIONS: [string, string][] = [
   ],
   [
     "Dates, routes and the globe",
-    "Dates are rounded mid-range figures and striped bar ends mark especially uncertain ones. Fossil sites are plotted at their real coordinates and light up for the period their fossils cover. Routes are the least certain element: the dated endpoints are evidence, the line between them is the simplest path over land. Coastlines are today’s; ice-age sea levels were up to 120 metres lower.",
+    "Dates are rounded mid-range figures and striped bar ends mark especially uncertain ones. Fossil sites are plotted at their real coordinates and light up for the period their fossils cover. Routes are the least certain element: the dated endpoints are evidence, the line between them is the simplest path over land. Coastlines move with sea level: the globe compares measured sea-floor depth (NOAA ETOPO2) with a published sea-level record, reliable for the last 800 thousand years and a rough guide before that. Ice sheets are not drawn. Dashed stretches of a route are water crossings.",
   ],
   [
     "The 3D skulls",

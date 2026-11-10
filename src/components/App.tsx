@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import { Dna } from "./Dna";
 import { FamilyTree } from "./FamilyTree";
 import { GoFurther } from "./GoFurther";
 import { Questions, Theories } from "./Questions";
+import { Quiz } from "./Quiz";
 import { ShortVersion } from "./ShortVersion";
 import { SkullLab } from "./SkullLab";
 import { TimeMachine } from "./TimeMachine";
@@ -14,9 +16,10 @@ export const NAV = [
   ["/#story", "Story"],
   ["/#tree", "Family tree"],
   ["/#skulls", "Skulls"],
+  ["/#dna", "DNA"],
   ["/#questions", "Evidence"],
+  ["/#quiz", "Test yourself"],
   ["/#adam", "Adam & Eve"],
-  ["/#further", "Go further"],
   ["/read", "Field notes"],
 ] as const;
 
@@ -44,7 +47,9 @@ function Sections() {
         <ShortVersion onOpen={open} />
         <FamilyTree onOpen={open} selectedId={selectedTaxon} activeTheories={activeTheories} onToggleTheory={toggleTheory} />
         <SkullLab onOpen={open} a={skull} onChangeA={setSkull} />
+        <Dna />
         <Questions onOpen={open} />
+        <Quiz onOpen={open} />
         <Theories onOpen={open} activeTheories={activeTheories} onToggleTheory={toggleTheory} />
         <GoFurther />
       </main>

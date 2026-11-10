@@ -11,7 +11,9 @@ import {
   getTaxon,
   getTheory,
 } from "@/data/catalog";
+import { cultureById } from "@/data/culture";
 import { figureFor, STATURE_CM } from "@/data/figures";
+import { methodById } from "@/data/methods";
 import { migrations } from "@/data/migrations";
 import type { Fossil, Source } from "@/data/types";
 import { commonsFileUrl, formatKa, formatRange, sketchfabEmbed, STATUS_BLURB } from "@/lib/format";
@@ -331,14 +333,7 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{c.question}</h2>
         <StatusBlock status={c.status} rationale={c.statusRationale} />
         <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">
-          <Rich text={c.summary} />
-          <sup className="ml-1 whitespace-nowrap text-[11px]">
-            {c.sourceIds.map((sid, i) => (
-              <Ref key={sid} target={{ kind: "source", id: sid }} className="mx-[1px] px-[1px] leading-[1.5] text-[var(--green)]">
-                {i + 1}
-              </Ref>
-            ))}
-          </sup>
+          <Rich text={c.summary} sources={c.sourceIds} />
         </p>
         {c.taxonIds?.length ? (
           <div className="mt-5 flex flex-wrap gap-1.5">
@@ -437,6 +432,74 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
     );
   }
 
+  if (target.kind === "culture") {
+    const c = cultureById[target.id];
+    if (!c) return null;
+    const related = c.claimId ? getClaim(c.claimId) : undefined;
+    return (
+      <div>
+        <p className="kicker text-[var(--green)]">
+          Tools and behaviour · {c.startKa === c.endKa ? `about ${formatKa(c.startKa)}` : formatRange(c.startKa, c.endKa)}
+        </p>
+        <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{c.label}</h2>
+        <div className="mt-4 flex items-center gap-2">
+          <StatusBadge status={c.status} />
+          <span className="text-[12px] text-[var(--faint)]">{STATUS_BLURB[c.status]}</span>
+        </div>
+        <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">
+          <Rich text={c.summary} sources={c.sourceIds} />
+        </p>
+        <div className="mt-5 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => {
+              timeStore.pause();
+              timeStore.setKa(c.startKa);
+              document.getElementById("tree")?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="rounded-full bg-[var(--ink)] px-3.5 py-1.5 text-[12.5px] font-medium text-white transition hover:bg-[var(--green-deep)]"
+          >
+            Show on the timeline
+          </button>
+        </div>
+        {related ? (
+          <section className="mt-7">
+            <h3 className="kicker text-[var(--faint)]">Related question</h3>
+            <Ref target={{ kind: "claim", id: related.id }} plain className="mt-3 flex w-full items-center gap-3 rounded-2xl border border-[var(--line)] px-4 py-3 text-left text-[14px] text-[var(--ink)] transition hover:border-[var(--green)]">
+              <span className="min-w-0 flex-1">{related.question}</span>
+              <StatusBadge status={related.status} compact />
+            </Ref>
+          </section>
+        ) : null}
+        <Sources ids={c.sourceIds} />
+      </div>
+    );
+  }
+
+  if (target.kind === "method") {
+    const m = methodById[target.id];
+    if (!m) return null;
+    return (
+      <div>
+        <p className="kicker text-[var(--green)]">How we know</p>
+        <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{m.title}</h2>
+        <p className="mt-3 text-[16px] leading-relaxed text-[var(--muted)]">{m.short}</p>
+        <div className="mt-5 space-y-4 text-[15.5px] leading-[1.7] text-[var(--ink)]">
+          {m.body.map((para) => (
+            <p key={para.slice(0, 40)}>
+              <Rich text={para} sources={m.sourceIds} />
+            </p>
+          ))}
+        </div>
+        <div className="mt-5 rounded-2xl border-l-4 border-[#e0a200] bg-[var(--panel)] p-4 text-[13.5px] leading-relaxed text-[var(--muted)]">
+          <strong className="font-semibold text-[var(--ink)]">Limits. </strong>
+          {m.limits}
+        </div>
+        <Sources ids={m.sourceIds} />
+      </div>
+    );
+  }
+
   const m = migrations.find((x) => x.id === target.id);
   if (!m) return null;
   return (
@@ -444,7 +507,7 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
       <p className="kicker" style={{ color: taxonColor(m.taxonId) }}>Journey · {formatRange(m.startKa, m.endKa)}</p>
       <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{m.label}</h2>
       <StatusBlock status={m.status} rationale="Routes are the least certain thing on the globe. Dated sites fix where people were; the line between them is the simplest path over land that fits." />
-      <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]"><Rich text={m.notes} /></p>
+      <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]"><Rich text={m.notes} sources={m.sourceIds} /></p>
       <div className="mt-5 flex flex-wrap items-center gap-2">
         <TaxonChip id={m.taxonId} onOpen={onOpen} />
         <button

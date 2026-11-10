@@ -6,6 +6,7 @@ import { getClaim } from "@/data/catalog";
 import { migrations } from "@/data/migrations";
 import { CHAPTERS, chapterIndexForKa, isAlive } from "@/data/story";
 import { taxa } from "@/data/taxa";
+import { seaLevel } from "@/lib/climate";
 import { taxonGlow } from "@/lib/palette";
 import { timeStore, useKaSelector, usePlaying } from "@/lib/timeStore";
 import { Scrubber } from "./Scrubber";
@@ -30,6 +31,7 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
   const alive = useKaSelector(aliveIds, aliveIds(7200));
   const routes = useKaSelector(routeIds, "");
   const playing = usePlaying();
+  const sea = useKaSelector((k) => Math.round(seaLevel(k) / 5) * 5, 0);
   const [hover, setHover] = useState<string | null>(null);
   const chapter = CHAPTERS[chapterIdx];
   const claim = chapter.claimId ? getClaim(chapter.claimId) : undefined;
@@ -142,6 +144,14 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
               </button>
             ))}
           </div>
+          <p
+            className={`pointer-events-none absolute left-4 top-2 flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10 transition-opacity duration-500 sm:left-6 ${
+              sea <= -10 ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <span className="h-2 w-2 rounded-sm" style={{ background: "#9cc79a" }} />
+            Sea level {Math.abs(sea)} m lower: pale land was dry
+          </p>
           <p className="pointer-events-none absolute right-4 top-2 hidden text-[11px] text-white/40 sm:block">
             Drag to spin{playing ? "" : " · press play or drag the timeline"}
           </p>

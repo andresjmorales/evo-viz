@@ -50,3 +50,8 @@ export function timeParts(ka: number): { value: string; unit: string } {
     return { value: (Math.round(ka * 10) * 100).toLocaleString("en-US"), unit: "years ago" };
   return { value: "Today", unit: "" };
 }
+
+/** Remove inline citation markers such as [@smith-2020] for plain-text uses. */
+export function stripCites(text: string): string {
+  return text.replace(/\[@[\w,-]+\]/g, "");
+}
