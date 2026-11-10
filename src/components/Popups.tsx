@@ -250,7 +250,8 @@ function PopupCard({
           <path d="M4 2.5h8v11l-4-2.8-4 2.8z" fill={saved ? "currentColor" : "none"} />
         </IconButton>
         <IconButton label={popup.pinned ? "Unpin" : "Pin this note open"} active={popup.pinned} onClick={onPin}>
-          <path d="M9.5 2 14 6.5l-2 .6-2.2 2.2.3 3L8 14.4 5 11.4 1.8 14.2M5 11.4 1.6 8l2.1-2.1 3 .3L8.9 4z" />
+          <path d="M5.6 2h4.8l-.7 4.2 2.3 2.8H4l2.3-2.8z" fill={popup.pinned ? "currentColor" : "none"} />
+          <path d="M8 9v5.2" />
         </IconButton>
         <IconButton label="Close" onClick={onClose}>
           <path d="M3.5 3.5l9 9M12.5 3.5l-9 9" />

@@ -29,6 +29,8 @@ Temporary working list. Delete this file once the items are done or moved to iss
 - Tool drawings redrawn with shading and colour; stone tools use a shared flake-scar renderer (`src/lib/facets.ts`)
 - Knapping animation (cobble to Oldowan chopper to Acheulean handaxe) on the stone-tool pages and the Tools tab
 - "How evolution works" gains gene flow and speciation panels
+- Known-range glow on the globe, built from dated sites and routes, plus a pale glow for the ape population our lineage came from
+- Phone layout no longer wider than the screen (the "short version" diagram was stretching the page); popup pin icon redrawn
 
 ## Still to do
 
@@ -49,6 +51,7 @@ Temporary working list. Delete this file once the items are done or moved to iss
 
 - **Ice sheets are a sketch.** The outlines are hand-simplified from Dyke 2004, Hughes et al. 2016 and Batchelor et al. 2019 and scaled with sea level, so every cold period gets the last glacial maximum's shape. The larger Eurasian ice of about 140 ka, mountain glaciers outside the Alps and Patagonia, and the real order of retreat are not shown.
 - **Sea level before 800 thousand years ago** is scaled from the oxygen-isotope record and is rough; the globe now says so. Nothing is shown before 5.3 million years.
+- **Ranges are a sketch.** The glow is a patch around each dated site and along each route (`src/data/ranges.ts`), not a reconstructed range. The hand-placed patches for Neanderthals, African erectus and early sapiens should be checked, and other species may need some.
 - **Route direction and choice.** Routes stay on land, but each is still one plausible path.
 
 ### Skulls
