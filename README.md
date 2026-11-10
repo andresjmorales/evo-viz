@@ -10,6 +10,7 @@ An interactive atlas of human evolution: seven million years told on a globe you
 - **Handle the skulls.** Rotate a procedural skull for any species, set two side by side, or blend one into another.
 - **Check the evidence.** Each question carries a grade (Settled, Strong, Contested, Shaky, Speculative), the reason for it, and footnotes to papers, books, museums and lectures.
 - **Overlay Adam and Eve.** Compare where Swamidass, Craig, Kemp, Alexander, Walton and BioLogos would place a first couple, on the same timeline as the science.
+- **Learn the mechanism.** Four interactive panels (mutation, a Punnett square, natural selection, genetic drift) explain how evolution works, followed by twelve common questions answered directly.
 - **Watch the coasts move.** The globe redraws coastlines from measured sea-floor depth as sea level falls and rises, so Sundaland, Sahul and Beringia appear when they were dry. Water crossings on routes are dashed.
 - **Read climate and culture beside the species.** Under the family tree run a lane of tools and behaviours and the deep-sea climate record.
 - **See what is left in us.** How much Neanderthal and Denisovan DNA people carry by region, and what some of it does.

@@ -115,12 +115,12 @@ export const culture: CultureItem[] = [
     id: "spears",
     row: 3,
     label: "Wooden spears",
-    startKa: 300,
-    endKa: 300,
+    startKa: 200,
+    endKa: 200,
     status: "strong",
     summary:
-      "Several carefully shaped spruce and pine spears were preserved in waterlogged sediment at Schöningen in Germany alongside butchered horses.[@thieme-1997] They are weighted like javelins and show planned hunting of large animals. They were first dated to roughly 300 to 400 thousand years ago; later work has argued for a younger age, so the marker here is approximate.",
-    sourceIds: ["thieme-1997"],
+      "Several carefully shaped spruce and pine spears were preserved in waterlogged sediment at Schöningen in Germany alongside butchered horses.[@thieme-1997] They are weighted like javelins and show planned, cooperative hunting of large animals. Long dated to 300 thousand years or more, they were re-dated in 2025 to about 200 thousand, which would make their makers Neanderthals.[@hutson-2025]",
+    sourceIds: ["thieme-1997", "hutson-2025"],
   },
   {
     id: "burial",
@@ -181,6 +181,29 @@ export const culture: CultureItem[] = [
       "The oldest dated pictures of recognisable things are on cave walls in Sulawesi, Indonesia: a scene with human-like figures and a pig at least 51 thousand years old,[@oktaviana-2024] and a life-sized pig at least 45 thousand.[@brumm-2021] The famous European painted caves are younger. All are the work of Homo sapiens.",
     sourceIds: ["oktaviana-2024", "brumm-2021"],
     claimId: "oldest-art",
+  },
+  {
+    id: "hafting",
+    row: 3,
+    label: "Glued and hafted tools",
+    startKa: 70,
+    endKa: 70,
+    status: "strong",
+    summary:
+      "Stone points from Sibudu Cave in South Africa, about 70 thousand years old, carry traces of a glue made by mixing plant gum with red ochre and heating it, a recipe that takes planning and several steps held in mind at once.[@wadley-2009] Neanderthals made a different adhesive, birch tar, and used it to back a flint flake found off the Dutch coast.[@niekus-2019]",
+    sourceIds: ["wadley-2009", "niekus-2019"],
+    claimId: "neanderthal-mind",
+  },
+  {
+    id: "farming",
+    row: 1,
+    label: "Farming",
+    startKa: 11.5,
+    endKa: 0,
+    status: "settled",
+    summary:
+      "From about 11,500 years ago people in several parts of the world independently began to cultivate plants and herd animals: wheat and sheep in southwest Asia, rice and millet in China, maize and squash in the Americas, and others.[@larson-2014] Almost everything in recorded history follows from it, yet it covers the last fifth of one percent of the time since our lineage parted from the chimpanzees’.",
+    sourceIds: ["larson-2014"],
   },
 ];
 
