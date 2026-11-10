@@ -9,6 +9,7 @@ import type { Topology } from "topojson-specification";
 import { sites } from "@/data/fossils";
 import { ICE_SHEETS, PRESENT_ICE_CLIP, iceFraction } from "@/data/ice";
 import { migrations } from "@/data/migrations";
+import { APE_ANCESTOR, RANGE_PATCHES, patchState } from "@/data/ranges";
 import { taxa } from "@/data/taxa";
 import { seaLevel } from "@/lib/climate";
 import { latLonToVec3, spherePath } from "@/lib/geo";
@@ -62,6 +63,7 @@ const GLOBE_FRAG = /* glsl */ `
   uniform float uHasShelf;
   uniform sampler2D uIce;
   uniform float uIceF;
+  uniform sampler2D uRange;
   varying vec2 vUv;
   varying vec3 vNormal;
   void main() {
@@ -73,6 +75,11 @@ const GLOBE_FRAG = /* glsl */ `
     // Texture values arrive in linear light: ocean green is near 0.05, land above 0.2.
     float isLand = smoothstep(0.09, 0.15, base.g);
     base = mix(base, vec3(0.3, 0.52, 0.3), exposed * (1.0 - isLand));
+    // Known ranges: a tint over land, brighter toward its rim.
+    vec3 range = texture2D(uRange, vUv).rgb;
+    float rAmt = max(range.r, max(range.g, range.b));
+    float onLand = max(isLand, exposed);
+    base = mix(base, range / max(rAmt, 0.001), min(1.0, rAmt * 1.5) * 0.46 * onLand);
     // Ice sheets grow out from their centres as sea level falls.
     float iceCut = 1.0 - 0.5 * uIceF;
     float ice = smoothstep(iceCut, iceCut + 0.05, texture2D(uIce, vUv).r) * step(0.01, uIceF);
@@ -326,6 +333,7 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
         uHasShelf: { value: 0 },
         uIce: { value: iceTexture() },
         uIceF: { value: 0 },
+        uRange: { value: null },
       },
       vertexShader: GLOBE_VERT,
       fragmentShader: GLOBE_FRAG,
@@ -365,6 +373,63 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
     shelfTex.generateMipmaps = false;
     shelfTex.minFilter = THREE.LinearFilter;
     globeMat.uniforms.uShelf.value = shelfTex;
+
+    // Known ranges, painted into a small map whenever they change.
+    const RW = 1024;
+    const RH = 512;
+    const rangeCanvas = document.createElement("canvas");
+    rangeCanvas.width = RW;
+    rangeCanvas.height = RH;
+    const rctx = rangeCanvas.getContext("2d")!;
+    const rangeTex = new THREE.CanvasTexture(rangeCanvas);
+    rangeTex.colorSpace = THREE.SRGBColorSpace;
+    globeMat.uniforms.uRange.value = rangeTex;
+    const patchRgb = RANGE_PATCHES.map((p) => {
+      const c = new THREE.Color(p.taxonId === APE_ANCESTOR ? "#e9e4d4" : taxonGlow(p.taxonId));
+      return [Math.round(c.r * 255), Math.round(c.g * 255), Math.round(c.b * 255)];
+    });
+    let rangeKey = "";
+    const paintRanges = (ka: number, hl: string | null) => {
+      const states = RANGE_PATCHES.map((p) => {
+        const st = patchState(p, ka);
+        const dim = hl && hl !== p.taxonId ? 0.25 : 1;
+        return [Math.round(st.strength * dim * 24), Math.round(st.grow * 16)];
+      });
+      const key = states.map((v) => v[0] * 32 + v[1]).join(",");
+      if (key === rangeKey) return;
+      rangeKey = key;
+      rctx.globalCompositeOperation = "source-over";
+      rctx.fillStyle = "#000";
+      rctx.fillRect(0, 0, RW, RH);
+      rctx.globalCompositeOperation = "lighten";
+      RANGE_PATCHES.forEach((p, i) => {
+        const [s24, g16] = states[i];
+        if (!s24) return;
+        const a = s24 / 24;
+        const rad = (p.r * (0.4 + (0.6 * g16) / 16) * RH) / 180;
+        const stretch = 1 / Math.max(0.3, Math.cos((p.lat * Math.PI) / 180));
+        const y = ((90 - p.lat) / 180) * RH;
+        const x = ((p.lon + 180) / 360) * RW;
+        const [r, g, b] = patchRgb[i];
+        const col = (k: number) => `rgb(${Math.round(r * a * k)},${Math.round(g * a * k)},${Math.round(b * a * k)})`;
+        for (const dx of x - rad * stretch < 0 ? [0, RW] : x + rad * stretch > RW ? [0, -RW] : [0]) {
+          rctx.save();
+          rctx.translate(x + dx, y);
+          rctx.scale(stretch, 1);
+          const grad = rctx.createRadialGradient(0, 0, 0, 0, 0, rad);
+          grad.addColorStop(0, col(1));
+          grad.addColorStop(0.55, col(1));
+          grad.addColorStop(0.8, col(0.45));
+          grad.addColorStop(1, "rgb(0,0,0)");
+          rctx.fillStyle = grad;
+          rctx.beginPath();
+          rctx.arc(0, 0, rad, 0, Math.PI * 2);
+          rctx.fill();
+          rctx.restore();
+        }
+      });
+      rangeTex.needsUpdate = true;
+    };
 
     // Routes
     const dot = dotTexture();
@@ -467,6 +532,7 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       const drop = Math.max(0, -seaLevel(ka));
       globeMat.uniforms.uDrop.value = drop;
       globeMat.uniforms.uIceF.value = iceFraction(drop);
+      paintRanges(ka, hl);
 
       if (flyTo.current) {
         camDir.copy(camera.position).normalize();
@@ -571,6 +637,7 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       ring.dispose();
       (globeMat.uniforms.uMap.value as THREE.Texture | null)?.dispose();
       shelfTex.dispose();
+      rangeTex.dispose();
       (globeMat.uniforms.uIce.value as THREE.Texture).dispose();
       renderer.dispose();
       renderer.domElement.remove();

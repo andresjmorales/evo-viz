@@ -50,7 +50,7 @@ export function ShortVersion({ onOpen }: { onOpen: OpenFn }) {
         side.
       </SectionHeading>
 
-      <div className="mt-10 grid items-start gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+      <div className="mt-10 grid grid-cols-1 items-start gap-10 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
         <ol className="space-y-6">
           {POINTS.map((p) => (
             <li key={p.n} className="flex gap-4">
@@ -101,7 +101,7 @@ function BushDiagram({ onOpen }: { onOpen: OpenFn }) {
     </g>
   );
   return (
-    <figure className="rounded-3xl border border-[var(--line)] bg-white p-4 sm:p-6">
+    <figure className="min-w-0 rounded-3xl border border-[var(--line)] bg-white p-4 sm:p-6">
       <div className="thin-scroll overflow-x-auto">
       <svg viewBox="0 0 720 352" className="h-auto w-full min-w-[560px]" role="img" aria-label="Simplified branching diagram of human evolution">
         {[

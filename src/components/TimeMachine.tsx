@@ -9,6 +9,7 @@ import { STATURE_CM } from "@/data/figures";
 import { taxa } from "@/data/taxa";
 import { CLIMATE_START_KA, SEA_MEASURED_TO_KA, seaLevel } from "@/lib/climate";
 import { iceFraction } from "@/data/ice";
+import { APE_ANCESTOR_UNTIL_KA } from "@/data/ranges";
 import { taxonGlow } from "@/lib/palette";
 import { timeStore, useKaSelector, usePlaying } from "@/lib/timeStore";
 import { Scrubber } from "./Scrubber";
@@ -47,6 +48,7 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
           : "",
     "",
   );
+  const apes = useKaSelector((k) => k > APE_ANCESTOR_UNTIL_KA, true);
   const [hover, setHover] = useState<string | null>(null);
   const chapter = CHAPTERS[chapterIdx];
   const claim = chapter.claimId ? getClaim(chapter.claimId) : undefined;
@@ -113,8 +115,9 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
             </p>
             <div className="mt-2.5 flex min-h-[68px] flex-wrap content-start gap-1.5">
               {aliveTaxa.length === 0 ? (
-                <span className="text-[13px] text-white/50">
-                  A gap in the fossil record. Nothing is securely dated to this moment.
+                <span className="text-[13px] leading-relaxed text-white/50">
+                  A gap in the fossil record: nothing is securely dated to this moment. The lineage did not stop; its
+                  members simply have not been found.
                 </span>
               ) : null}
               {aliveTaxa.map((t) => (
@@ -168,11 +171,17 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
               </button>
             ))}
           </div>
-          <div
-            className={`pointer-events-none absolute left-4 top-2 flex flex-col items-start gap-1 transition-opacity duration-500 sm:left-6 ${
-              sea <= -10 || seaNote ? "opacity-100" : "opacity-0"
-            }`}
-          >
+          <div className="pointer-events-none absolute left-4 top-2 flex flex-col items-start gap-1 sm:left-6">
+            <p className="flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10">
+              <span className="h-2 w-2 rounded-full" style={{ background: "radial-gradient(circle, #ffd16688 40%, #ffd166 75%, transparent)" }} />
+              Glow: where each species is known from, roughly
+            </p>
+            {apes ? (
+              <p className="flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10">
+                <span className="h-2 w-2 rounded-full bg-[#e9e4d4]" />
+                Pale glow: the African apes our lineage came from
+              </p>
+            ) : null}
             {sea <= -10 ? (
               <p className="flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10">
                 <span className="h-2 w-2 rounded-sm" style={{ background: "#9cc79a" }} />
