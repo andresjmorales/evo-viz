@@ -44,4 +44,16 @@ export const glossary: Term[] = [
   { id: "c4", term: "C4", def: "A photosynthetic pathway used by tropical grasses and sedges. It leaves a chemical signature in tooth enamel, so diets rich in these plants (or in animals that ate them) can be detected." },
 ];
 
+glossary.push(
+  { id: "gene", term: "gene", aliases: ["genes"], def: "A stretch of DNA that carries the instructions for one product, usually a protein. Humans have about 20,000." },
+  { id: "allele", term: "allele", aliases: ["alleles", "gene variant", "gene variants", "variant", "variants"], def: "One of the alternative versions of a gene. You inherit one from each parent, and they may be the same or different." },
+  { id: "mutation", term: "mutation", aliases: ["mutations"], def: "A change in the DNA sequence, most often a copying error when a cell divides. Mutations are the only source of brand-new genetic variation." },
+  { id: "natural-selection", term: "natural selection", def: "The process by which heritable traits that help their carriers survive and reproduce become more common over generations." },
+  { id: "genetic-drift", term: "genetic drift", aliases: ["drift"], def: "Change in how common a gene variant is that comes from chance alone: which individuals happen to have children, and which copy each child happens to inherit. It is strongest in small populations." },
+  { id: "fitness", term: "fitness", def: "In biology, the number of surviving offspring an individual leaves compared with others. It has nothing to do with strength or worth." },
+  { id: "modern-synthesis", term: "modern synthesis", def: "The joining, in the 1930s and 1940s, of Darwin’s natural selection with Mendel’s genetics. It recast evolution as change in the frequency of gene variants within populations." },
+  { id: "common-descent", term: "common descent", aliases: ["common ancestors", "common ancestor"], def: "The finding that different species trace back to shared ancestral populations, so that all living things are related, some closely and some very distantly." },
+  { id: "chromosome", term: "chromosome", aliases: ["chromosomes"], def: "One of the long packaged molecules of DNA in a cell. Humans have 23 pairs; chimpanzees and gorillas have 24." },
+);
+
 export const termById = Object.fromEntries(glossary.map((t) => [t.id, t]));

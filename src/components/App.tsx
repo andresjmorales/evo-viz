@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useCallback, useState } from "react";
+import { Clarity } from "./Clarity";
 import { Dna } from "./Dna";
 import { FamilyTree } from "./FamilyTree";
 import { GoFurther } from "./GoFurther";
+import { Mechanics } from "./Mechanics";
 import { Questions, Theories } from "./Questions";
 import { Quiz } from "./Quiz";
 import { ShortVersion } from "./ShortVersion";
@@ -14,11 +16,13 @@ import { Workspace, useWorkspace } from "./Workspace";
 
 export const NAV = [
   ["/#story", "Story"],
+  ["/#how", "How it works"],
   ["/#tree", "Family tree"],
   ["/#skulls", "Skulls"],
   ["/#dna", "DNA"],
   ["/#questions", "Evidence"],
-  ["/#quiz", "Test yourself"],
+  ["/#clarity", "Questions"],
+  ["/#quiz", "Quiz"],
   ["/#adam", "Adam & Eve"],
   ["/read", "Field notes"],
 ] as const;
@@ -45,10 +49,12 @@ function Sections() {
       <main>
         <TimeMachine onOpen={open} />
         <ShortVersion onOpen={open} />
+        <Mechanics />
         <FamilyTree onOpen={open} selectedId={selectedTaxon} activeTheories={activeTheories} onToggleTheory={toggleTheory} />
         <SkullLab onOpen={open} a={skull} onChangeA={setSkull} />
         <Dna />
         <Questions onOpen={open} />
+        <Clarity onOpen={open} />
         <Quiz onOpen={open} />
         <Theories onOpen={open} activeTheories={activeTheories} onToggleTheory={toggleTheory} />
         <GoFurther />

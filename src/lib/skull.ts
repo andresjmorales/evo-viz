@@ -293,7 +293,7 @@ export function mandibleSDF(p: SkullParams, f: SkullFrame) {
   const rh = (jy - gy) / 2 - 0.02;
   const lean = Math.atan2(jz - gz, jy - gy);
   const cs = Math.cos(lean), sn = Math.sin(lean);
-  const rw = 0.12 * robust;
+  const rw = 0.155 * robust;
   const thick = 0.062 * robust;
   return (x0: number, y: number, z: number): number => {
     const x = Math.abs(x0);
@@ -307,7 +307,7 @@ export function mandibleSDF(p: SkullParams, f: SkullFrame) {
     const ly = dy * cs + dz * sn;
     const lz = -dy * sn + dz * cs;
     const lx = x - (gx + (jx - gx) * Math.min(1, Math.max(0, (ly + rh) / (2 * rh))));
-    let r = smax(rbox(lx, ly, lz, 0, 0, 0, 0.036, rh, rw, 0.034),
+    let r = smax(rbox(lx, ly, lz, 0, 0, 0, 0.04, rh, rw, 0.038),
       ell(lx, ly, lz, 0, 0.02, 0, 0.2, rh * 1.22, rw * 1.18), 0.05);
     // notch between the coronoid process and the condyle
     r = smax(r, -ell(lx, ly, lz, 0, rh + 0.03, -0.005, 0.2, 0.13, rw * 0.5), 0.04);
@@ -315,8 +315,8 @@ export function mandibleSDF(p: SkullParams, f: SkullFrame) {
     r = smin(r, cap(lx, ly, lz, 0, rh - 0.1, rw - 0.045, 0, rh + 0.07, rw - 0.02, 0.03), 0.04);
     // condyle: a neck and a head that sits in the joint
     r = smin(r, cap(lx, ly, lz, 0, rh - 0.1, -rw + 0.05, 0, rh + 0.04, -rw + 0.045, 0.036), 0.04);
-    r = smin(r, ell(lx, ly, lz, 0, rh + 0.06, -rw + 0.045, 0.085, 0.042, 0.045), 0.03);
-    d = smin(d, r, 0.1);
+    r = smin(r, ell(lx, ly, lz, 0, rh + 0.055, -rw + 0.045, 0.062, 0.04, 0.045), 0.03);
+    d = smin(d, r, 0.14);
     // rounded angle of the jaw
     d = smin(d, ell(x, y, z, gx, gy + 0.05, gz + 0.02, 0.04, 0.09, 0.09), 0.06);
     // symphysis: sloping back in early forms, a chin in sapiens
@@ -381,7 +381,7 @@ export function teeth(p: SkullParams, f: SkullFrame): ToothSpec[] {
       const h = (molar ? 0.075 : 0.1) * (canine ? 1 + 0.9 * p.canine : 1) * (row === 1 ? 1 : 0.92);
       const depth = molar ? w * 0.95 : canine ? 0.055 : 0.034;
       const inset = row === 1 ? 0 : 0.022;
-      const y = row === 1 ? f.yTeeth - h / 2 + 0.03 : f.yTeeth - 0.1 + h / 2 - 0.035;
+      const y = row === 1 ? f.yTeeth - h / 2 + 0.045 : f.yTeeth - 0.1 + h / 2 - 0.035;
       for (const side of [1, -1]) {
         out.push({
           pos: [side * (c[0] - inset * Math.cos(yaw)), y, c[1] - inset * 0.6],
