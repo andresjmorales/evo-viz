@@ -127,10 +127,11 @@ export const methods: Method[] = [
     body: [
       "Water containing the lighter form of oxygen evaporates more easily. During an ice age that lighter water is locked up in ice sheets, leaving the ocean enriched in the heavy form. Tiny shelled organisms on the sea floor build that ratio into their shells, and their remains pile up layer by layer. A core drilled through the mud is a continuous record of ice volume and deep-sea temperature.",
       "Fifty-seven such cores from around the world were combined into the single curve drawn under the family tree on this site.[@lisiecki-2005] Sea level follows from ice volume, and for the last 800 thousand years it has been reconstructed directly from several independent records.[@spratt-2016] Combined with measured sea-floor depths, that gives the shifting coastlines on the globe.",
+      "Where the ice stood is mapped on land from the moraines and scratched bedrock it left, and dated with radiocarbon and with isotopes that build up in rock once ice uncovers it; on the sea floor, from the tracks and debris of grounded ice. Those maps have been assembled for North America,[@dyke-2004] Eurasia[@hughes-2016] and the whole Northern Hemisphere,[@batchelor-2019] and the last glacial maximum, about 21 thousand years ago, is the best known of them.[@clark-2009] The globe draws a simplified version of those outlines and grows or shrinks it with sea level.",
     ],
     limits:
-      "The curve is a global average. Local climate, which is what an animal experiences, could differ. Sea level before 800 thousand years ago is scaled from the oxygen record and is a rough guide.",
-    sourceIds: ["lisiecki-2005", "spratt-2016"],
+      "The curve is a global average. Local climate, which is what an animal experiences, could differ. Sea level before 800 thousand years ago is scaled from the oxygen record and is a rough guide, and there is no record on this site before 5.3 million years. The ice on the globe uses the last glacial maximum’s outline for every cold period; earlier ice sheets had different shapes, and the ones in Eurasia about 140 thousand years ago were larger.",
+    sourceIds: ["lisiecki-2005", "spratt-2016", "dyke-2004", "hughes-2016", "batchelor-2019", "clark-2009"],
   },
 ];
 

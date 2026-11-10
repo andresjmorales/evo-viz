@@ -11,7 +11,7 @@ import {
   getTaxon,
   getTheory,
 } from "@/data/catalog";
-import { cultureById } from "@/data/culture";
+import { TOOL_NOTES, cultureById, cultureForTaxon } from "@/data/culture";
 import { figureFor, STATURE_CM } from "@/data/figures";
 import { methodById } from "@/data/methods";
 import { migrations } from "@/data/migrations";
@@ -23,6 +23,7 @@ import { timeStore } from "@/lib/timeStore";
 import { notebook, useNotebook } from "@/lib/notebook";
 import { Ref, Rich } from "./Popups";
 import { notice } from "./SkullLab";
+import { ToolArt } from "./ToolArt";
 import { Figure, StatusBadge, type OpenFn, type PanelTarget } from "./ui";
 
 const SkullViewer = dynamic(() => import("./SkullViewer"), { ssr: false });
@@ -161,13 +162,22 @@ export function FossilViewer({ fossil }: { fossil: Fossil }) {
 
 function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
   const t = getTaxon(id);
-  const [tab, setTab] = useState<"about" | "evidence" | "fossils">("about");
+  const [tab, setTab] = useState<"about" | "tools" | "evidence" | "fossils">("about");
   if (!t) return null;
   const color = taxonColor(id);
   const fig = figureFor(id);
   const fossils = fossilsForTaxon(id);
   const taxonClaims = claimsForTaxon(id);
   const routes = migrations.filter((m) => m.taxonId === id);
+  const tools = cultureForTaxon(id);
+  const cited = [
+    ...new Set(
+      [t.summary, t.anatomy, t.behavior, t.discovery]
+        .join(" ")
+        .match(/\[@([^\]]+)\]/g)
+        ?.flatMap((m) => m.slice(2, -1).split(",")) ?? [],
+    ),
+  ];
   const parent = t.parentId ? getTaxon(t.parentId) : undefined;
   const facts: [string, string][] = [
     ["Lived", formatRange(t.rangeStartKa, t.rangeEndKa)],
@@ -217,6 +227,7 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
       <div className="mt-6 flex gap-1 rounded-full bg-[var(--panel)] p-1">
         {([
           ["about", "About"],
+          ["tools", `Tools (${tools.length})`],
           ["evidence", `Evidence (${taxonClaims.length})`],
           ["fossils", `Fossils (${fossils.length})`],
         ] as const).map(([k, label]) => (
@@ -224,7 +235,7 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
             key={k}
             type="button"
             onClick={() => setTab(k)}
-            className={`flex-1 rounded-full px-3 py-2 text-[13px] font-medium transition ${
+            className={`flex-1 whitespace-nowrap rounded-full px-2 py-2 text-[12.5px] font-medium transition sm:px-3 sm:text-[13px] ${
               tab === k ? "bg-white text-[var(--ink)] shadow-sm" : "text-[var(--muted)] hover:text-[var(--ink)]"
             }`}
           >
@@ -235,7 +246,7 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
 
       {tab === "about" ? (
         <div className="mt-5 space-y-5 text-[15px] leading-[1.65] text-[var(--muted)]">
-          <p className="text-[16px] text-[var(--ink)]"><Rich text={t.summary} skip={id} /></p>
+          <p className="text-[16px] text-[var(--ink)]"><Rich text={t.summary} skip={id} sources={cited} /></p>
           <section>
             <h3 className="mb-1.5 text-[14px] font-semibold text-[var(--ink)]">What to notice in the skull</h3>
             <ul className="space-y-1">
@@ -249,15 +260,15 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
           </section>
           <section>
             <h3 className="mb-1 text-[14px] font-semibold text-[var(--ink)]">Anatomy</h3>
-            <p><Rich text={t.anatomy} skip={id} /></p>
+            <p><Rich text={t.anatomy} skip={id} sources={cited} /></p>
           </section>
           <section>
             <h3 className="mb-1 text-[14px] font-semibold text-[var(--ink)]">Behaviour and setting</h3>
-            <p><Rich text={t.behavior} skip={id} /></p>
+            <p><Rich text={t.behavior} skip={id} sources={cited} /></p>
           </section>
           <section>
             <h3 className="mb-1 text-[14px] font-semibold text-[var(--ink)]">How it was found</h3>
-            <p><Rich text={t.discovery} skip={id} /></p>
+            <p><Rich text={t.discovery} skip={id} sources={cited} /></p>
           </section>
           {parent ? (
             <p className="rounded-2xl bg-[var(--panel)] p-4 text-[13.5px]">
@@ -278,8 +289,11 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
               </div>
             </section>
           ) : null}
+          <Sources ids={cited} />
         </div>
       ) : null}
+
+      {tab === "tools" ? <ToolsTab id={id} tools={tools} onOpen={onOpen} /> : null}
 
       {tab === "evidence" ? (
         <div className="mt-5 space-y-2.5">
@@ -302,6 +316,63 @@ function TaxonPage({ id, onOpen }: { id: string; onOpen: OpenFn }) {
           ))}
         </div>
       ) : null}
+    </div>
+  );
+}
+
+function ToolsTab({
+  id,
+  tools,
+  onOpen,
+}: {
+  id: string;
+  tools: ReturnType<typeof cultureForTaxon>;
+  onOpen: OpenFn;
+}) {
+  const note = TOOL_NOTES[id];
+  const t = getTaxon(id);
+  return (
+    <div className="mt-5">
+      {note ? (
+        <p className="mb-4 rounded-2xl bg-[var(--panel)] p-4 text-[14px] leading-relaxed text-[var(--muted)]">
+          <Rich text={note.text} sources={note.sourceIds} skip={id} />
+        </p>
+      ) : null}
+      {tools.length ? (
+        <>
+          <p className="mb-3 text-[13px] leading-relaxed text-[var(--faint)]">
+            What {t ? <em>{t.name}</em> : "this species"} is linked to, oldest first. Drawings show the typical form, not a particular find.
+          </p>
+          <div className="grid grid-cols-2 gap-2.5">
+            {tools.map(({ c, maybe }) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => onOpen({ kind: "culture", id: c.id })}
+                className="group flex flex-col rounded-2xl border border-[var(--line)] p-3 text-left transition hover:border-[var(--green)]"
+              >
+                <span className="grid h-[76px] place-items-center rounded-xl bg-[var(--panel)] text-[#3b4a5a] transition group-hover:text-[var(--green)]">
+                  <ToolArt art={c.art} size={60} />
+                </span>
+                <span className="mt-2.5 text-[13.5px] font-medium leading-snug text-[var(--ink)]">{c.label}</span>
+                <span className="mt-0.5 text-[11.5px] tabular-nums text-[var(--faint)]">
+                  {c.startKa === c.endKa ? `about ${formatKa(c.startKa)}` : `from ${formatKa(c.startKa)}`}
+                </span>
+                <span className="mt-2 flex items-center gap-1.5">
+                  <StatusBadge status={c.status} compact />
+                  {maybe ? (
+                    <span className="rounded-full bg-[#fff4d6] px-1.5 py-0.5 text-[10.5px] font-semibold text-[#8a5a00]">possible maker</span>
+                  ) : null}
+                </span>
+              </button>
+            ))}
+          </div>
+        </>
+      ) : null}
+      {!note && !tools.length ? (
+        <p className="text-[14px] text-[var(--muted)]">Nothing on the tools lane is linked to this species yet.</p>
+      ) : null}
+      {note?.sourceIds.length ? <Sources ids={note.sourceIds} /> : null}
     </div>
   );
 }
@@ -441,7 +512,12 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         <p className="kicker text-[var(--green)]">
           Tools and behaviour · {c.startKa === c.endKa ? `about ${formatKa(c.startKa)}` : formatRange(c.startKa, c.endKa)}
         </p>
-        <h2 className="display mt-2 text-[30px] leading-[1.12] text-[var(--ink)]">{c.label}</h2>
+        <div className="mt-2 flex items-start gap-4">
+          <h2 className="display min-w-0 flex-1 text-[30px] leading-[1.12] text-[var(--ink)]">{c.label}</h2>
+          <span className="grid h-[88px] w-[88px] shrink-0 place-items-center rounded-2xl bg-[var(--panel)] text-[#3b4a5a]">
+            <ToolArt art={c.art} size={70} />
+          </span>
+        </div>
         <div className="mt-4 flex items-center gap-2">
           <StatusBadge status={c.status} />
           <span className="text-[12px] text-[var(--faint)]">{STATUS_BLURB[c.status]}</span>
@@ -449,6 +525,19 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">
           <Rich text={c.summary} sources={c.sourceIds} />
         </p>
+        {c.makers.length ? (
+          <section className="mt-5">
+            <h3 className="text-[13px] font-semibold text-[var(--ink)]">Made or done by</h3>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {c.makers.map((m) => (
+                <span key={m.id} className="inline-flex items-center gap-1">
+                  <TaxonChip id={m.id} onOpen={onOpen} />
+                  {m.maybe ? <span className="text-[11px] text-[var(--faint)]">(possibly)</span> : null}
+                </span>
+              ))}
+            </div>
+          </section>
+        ) : null}
         <div className="mt-5 flex flex-wrap items-center gap-2">
           <button
             type="button"

@@ -14,6 +14,7 @@ import {
 import { createPortal } from "react-dom";
 import { getClaim, getFossil, getSource, getTaxon, getTheory } from "@/data/catalog";
 import { cultureById } from "@/data/culture";
+import { ToolArt } from "./ToolArt";
 import { glossary, termById } from "@/data/glossary";
 import { methodById } from "@/data/methods";
 import { migrations } from "@/data/migrations";
@@ -330,7 +331,7 @@ export function Preview({ target }: { target: RefTarget }) {
           </div>
         </div>
         <p className="mt-3 text-[13.5px] leading-relaxed text-[var(--ink)]">
-          <Rich text={clip(t.summary, 330)} skip={t.id} />
+          <Rich text={clip(stripCites(t.summary), 330)} skip={t.id} />
         </p>
       </div>
     );
@@ -368,7 +369,7 @@ export function Preview({ target }: { target: RefTarget }) {
           {t.year ? `, ${t.year}` : ""}
         </p>
         <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--ink)]">
-          <Rich text={clip(t.summary, 380)} />
+          <Rich text={clip(stripCites(t.summary), 380)} />
         </p>
       </div>
     );
@@ -403,8 +404,13 @@ export function Preview({ target }: { target: RefTarget }) {
     if (!c) return null;
     return (
       <div>
-        <StatusBadge status={c.status} />
-        <p className="display mt-2 text-[18px] leading-snug text-[var(--ink)]">{c.label}</p>
+        <div className="flex items-start gap-3">
+          <span className="min-w-0 flex-1">
+            <StatusBadge status={c.status} />
+            <p className="display mt-2 text-[18px] leading-snug text-[var(--ink)]">{c.label}</p>
+          </span>
+          <ToolArt art={c.art} size={44} className="shrink-0 text-[#3b4a5a]" />
+        </div>
         <p className="text-[12px] text-[var(--faint)]">
           {c.startKa === c.endKa ? `about ${formatKa(c.startKa)}` : formatRange(c.startKa, c.endKa)}
         </p>

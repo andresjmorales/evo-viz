@@ -8,7 +8,7 @@ import { culture } from "@/data/culture";
 import { sites } from "@/data/fossils";
 import { taxa } from "@/data/taxa";
 import type { Status } from "@/data/types";
-import { formatKa, formatRange, STATUS_LABEL } from "@/lib/format";
+import { formatKa, formatRange, STATUS_LABEL, stripCites } from "@/lib/format";
 import { skullParams } from "@/lib/skull";
 import { SectionHeading, shortName, type OpenFn, type PanelTarget } from "./ui";
 
@@ -51,7 +51,7 @@ const makers: (() => Question | null)[] = [
       prompt: "Whose skull is this? Drag it to look around.",
       skull: id,
       ...withOptions(t.name, SKULL_POOL.filter((x) => x !== id).map((x) => getTaxon(x)!.name)),
-      explain: t.anatomy,
+      explain: stripCites(t.anatomy),
       more: { kind: "taxon", id },
     };
   },
