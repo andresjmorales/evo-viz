@@ -533,6 +533,280 @@ function DriftLab() {
   );
 }
 
+// ---------- 5. gene flow ----------
+
+const VALLEY = 48;
+const FLOW_GENS = 60;
+const FLOW_RATES: { label: string; m: number }[] = [
+  { label: "None", m: 0 },
+  { label: "1 in 50", m: 0.02 },
+  { label: "1 in 10", m: 0.1 },
+  { label: "1 in 4", m: 0.25 },
+];
+interface Dot {
+  blue: boolean;
+  /** Has a parent from the other valley. */
+  moved: boolean;
+}
+const startValley = (blueShare: number): Dot[] =>
+  Array.from({ length: VALLEY }, (_, i) => ({ blue: i < VALLEY * blueShare, moved: false }));
+const share = (v: Dot[]) => v.filter((d) => d.blue).length / v.length;
+
+function GeneFlowLab() {
+  const [a, setA] = useState<Dot[]>(() => startValley(0.9));
+  const [b, setB] = useState<Dot[]>(() => startValley(0.1));
+  const [rate, setRate] = useState(2);
+  const [playing, setPlaying] = useState(false);
+  const [hist, setHist] = useState<[number, number][]>([[0.9, 0.1]]);
+  const state = useRef({ a, b });
+  useEffect(() => {
+    state.current = { a, b };
+  }, [a, b]);
+  const gen = hist.length - 1;
+
+  const step = () => {
+    const m = FLOW_RATES[rate].m;
+    const { a: pa, b: pb } = state.current;
+    const breed = (home: Dot[], away: Dot[]): Dot[] =>
+      home.map(() => {
+        const moved = Math.random() < m;
+        const src = moved ? away : home;
+        return { blue: src[Math.floor(Math.random() * src.length)].blue, moved };
+      });
+    const na = breed(pa, pb);
+    const nb = breed(pb, pa);
+    setA(na);
+    setB(nb);
+    setHist((h) => [...h, [share(na), share(nb)] as [number, number]]);
+  };
+  useEffect(() => {
+    if (!playing) return;
+    if (gen >= FLOW_GENS) {
+      const t = window.setTimeout(() => setPlaying(false), 0);
+      return () => window.clearTimeout(t);
+    }
+    const t = window.setTimeout(step, 260);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playing, gen]);
+  const reset = () => {
+    setPlaying(false);
+    setA(startValley(0.9));
+    setB(startValley(0.1));
+    setHist([[0.9, 0.1]]);
+  };
+
+  const valley = (v: Dot[], x0: number, label: string) => (
+    <g>
+      <rect x={x0} y={6} width={118} height={88} rx={14} fill="#fff" stroke="#dde7e0" />
+      <text x={x0 + 10} y={20} fontSize="8.5" fill="#6b7a71">
+        {label} · {Math.round(share(v) * 100)}% blue
+      </text>
+      {v.map((d, i) => {
+        const cx = x0 + 13 + (i % 8) * 13.1;
+        const cy = 31 + Math.floor(i / 8) * 10.8;
+        return (
+          <g key={i}>
+            {d.moved ? <circle cx={cx} cy={cy} r={5.2} fill="none" stroke="#0d2118" strokeWidth={0.9} strokeDasharray="2 1.5" /> : null}
+            <circle cx={cx} cy={cy} r={3.7} fill={d.blue ? "#2a78e4" : "#e8703a"} />
+          </g>
+        );
+      })}
+    </g>
+  );
+  const m = FLOW_RATES[rate].m;
+  const line = (k: 0 | 1) => hist.map((h, g) => `${(g / FLOW_GENS) * 100},${(39 - h[k] * 38).toFixed(2)}`).join(" ");
+
+  return (
+    <div>
+      <svg viewBox="0 0 300 100" className="w-full rounded-2xl bg-[var(--panel)]" role="img" aria-label="Two valley populations exchanging migrants">
+        {valley(a, 8, "West valley")}
+        {valley(b, 174, "East valley")}
+        {/* the pass between them */}
+        <g opacity={m ? 1 : 0.25} stroke="#0d2118" strokeLinecap="round" fill="none" strokeWidth={m ? 0.8 + m * 9 : 0.8}>
+          <path d="M132 40 H166 M160 35 l6 5 l-6 5" />
+          <path d="M168 62 H134 M140 57 l-6 5 l6 5" />
+        </g>
+        {m === 0 ? (
+          <text x={150} y={54} textAnchor="middle" fontSize="7.5" fill="#6b7a71">
+            no contact
+          </text>
+        ) : null}
+      </svg>
+      <div className="relative mt-2">
+        <svg viewBox="0 0 100 40" preserveAspectRatio="none" className="h-[84px] w-full rounded-2xl bg-[var(--panel)]" role="img" aria-label="Share of the blue variant in each valley over time">
+          <line x1={0} x2={100} y1={20} y2={20} stroke="#dde7e0" strokeWidth={1} vectorEffect="non-scaling-stroke" />
+          <polyline points={line(0)} fill="none" stroke="#0d2118" strokeWidth={2} vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+          <polyline points={line(1)} fill="none" stroke="#0c9a56" strokeWidth={2} strokeDasharray="4 3" vectorEffect="non-scaling-stroke" strokeLinejoin="round" />
+        </svg>
+        <span className="absolute left-2 top-1.5 text-[10.5px] text-[var(--faint)]">all blue</span>
+        <span className="absolute bottom-1.5 left-2 text-[10.5px] text-[var(--faint)]">no blue</span>
+        <span className="absolute right-2 top-1.5 text-[10.5px] tabular-nums text-[var(--faint)]">generation {gen}</span>
+      </div>
+      <p className="mt-1.5 text-[11.5px] text-[var(--faint)]">Share of blue in each valley. Solid line: west. Dashed: east.</p>
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
+        <span className="mr-1 text-[12.5px] text-[var(--muted)]">Children with a parent from over the pass:</span>
+        {FLOW_RATES.map((r, i) => (
+          <Pill key={r.label} on={rate === i} onClick={() => setRate(i)}>
+            {r.label}
+          </Pill>
+        ))}
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            if (gen >= FLOW_GENS) reset();
+            setPlaying((p) => !p);
+          }}
+          className="rounded-full bg-[var(--ink)] px-4 py-1.5 text-[12.5px] font-medium text-white transition hover:bg-[var(--green-deep)]"
+        >
+          {playing ? "Pause" : gen >= FLOW_GENS ? "Run again" : gen ? "Continue" : "Play"}
+        </button>
+        <button type="button" onClick={reset} className="rounded-full bg-[var(--panel)] px-4 py-1.5 text-[12.5px] font-medium text-[var(--ink)] transition hover:bg-[var(--line)]">
+          Reset
+        </button>
+        <span className="text-[12px] text-[var(--faint)]">Dashed ring: has a parent from the other valley.</span>
+      </div>
+    </div>
+  );
+}
+
+// ---------- 6. speciation ----------
+
+const SPLIT_TICKS = 240;
+const ISOLATION_AT = 80;
+interface SplitState {
+  a: number;
+  b: number;
+  /** Time spent apart, which builds up incompatibilities. */
+  apart: number;
+  barrier: boolean;
+  hist: { a: number; b: number; barrier: boolean }[];
+}
+const SPLIT_START: SplitState = { a: 0, b: 0, apart: 0, barrier: false, hist: [{ a: 0, b: 0, barrier: false }] };
+
+function SpeciationLab() {
+  const [st, setSt] = useState<SplitState>(SPLIT_START);
+  const [playing, setPlaying] = useState(false);
+  const t = st.hist.length - 1;
+  const two = st.apart >= ISOLATION_AT;
+  const compat = Math.max(0, 1 - st.apart / ISOLATION_AT);
+
+  useEffect(() => {
+    if (!playing) return;
+    if (t >= SPLIT_TICKS) {
+      const id = window.setTimeout(() => setPlaying(false), 0);
+      return () => window.clearTimeout(id);
+    }
+    const id = window.setTimeout(() => {
+      setSt((s) => {
+        const noise = () => (Math.random() - 0.5) * 1.5;
+        const split = s.apart >= ISOLATION_AT;
+        let { a, b, apart } = s;
+        if (s.barrier || split) {
+          // different conditions on each side pull the two apart
+          a += -0.2 + noise();
+          b += 0.2 + noise();
+          if (s.barrier && !split) apart += 1;
+        } else {
+          // interbreeding pulls them back together and washes out differences
+          const mid = (a + b) / 2;
+          a += (mid - a) * 0.1 + noise();
+          b += (mid - b) * 0.1 + noise();
+          apart = Math.max(0, apart - 1.5);
+          if (Math.abs(a - b) < 2.5) b = a;
+        }
+        a = Math.max(-44, Math.min(44, a));
+        b = Math.max(-44, Math.min(44, b));
+        return { a, b, apart, barrier: s.barrier, hist: [...s.hist, { a, b, barrier: s.barrier }] };
+      });
+    }, 85);
+    return () => window.clearTimeout(id);
+  }, [playing, t]);
+
+  const X = (i: number) => 6 + (i / SPLIT_TICKS) * 268;
+  const Y = (v: number) => 50 + v;
+  const path = (k: "a" | "b") => st.hist.map((h, i) => `${i ? "L" : "M"}${X(i).toFixed(1)} ${Y(h[k]).toFixed(1)}`).join(" ");
+  // spans of time with the barrier up
+  const spans: [number, number][] = [];
+  st.hist.forEach((h, i) => {
+    if (!h.barrier) return;
+    const last = spans[spans.length - 1];
+    if (last && last[1] === i - 1) last[1] = i;
+    else spans.push([i, i]);
+  });
+  const merged = !st.barrier && !two && st.a === st.b;
+  const status = two ? "Two species" : st.barrier ? "One species, split in two" : merged ? "One species" : "One species, mixing again";
+
+  return (
+    <div>
+      <div className="relative">
+        <svg viewBox="0 0 300 100" className="w-full rounded-2xl bg-[var(--panel)]" role="img" aria-label={`Branching diagram of a population through time: ${status}`}>
+          {spans.map(([i0, i1]) => (
+            <rect key={i0} x={X(i0)} y={4} width={Math.max(0.5, X(i1) - X(i0))} height={92} fill="#6f7c90" opacity={0.13} />
+          ))}
+          {st.barrier ? <line x1={X(t)} x2={300} y1={50} y2={50} stroke="#6f7c90" strokeWidth={2.5} strokeDasharray="1 4" strokeLinecap="round" /> : null}
+          <path d={path("a")} fill="none" stroke="#2a78e4" strokeWidth={2.2} strokeLinejoin="round" strokeLinecap="round" />
+          <path d={path("b")} fill="none" stroke={merged && !spans.length ? "#2a78e4" : "#e8703a"} strokeWidth={2.2} strokeLinejoin="round" strokeLinecap="round" />
+          {/* the living populations */}
+          {(["a", "b"] as const).map((k) =>
+            k === "b" && merged ? null : (
+              <g key={k}>
+                {[-5, 0, 5].map((dy, i) => (
+                  <circle key={dy} cx={X(t) + 7 + (i % 2) * 5} cy={Y(st[k]) + dy} r={2.6} fill={k === "a" ? "#2a78e4" : merged && !spans.length ? "#2a78e4" : "#e8703a"} stroke="#fff" strokeWidth={0.6} />
+                ))}
+              </g>
+            ),
+          )}
+        </svg>
+        <span className="absolute left-3 top-2 rounded-full bg-white/85 px-2.5 py-1 text-[11.5px] font-semibold text-[var(--ink)]">{status}</span>
+        <span className="absolute bottom-1.5 left-3 text-[10.5px] text-[var(--faint)]">time →</span>
+        <span className="absolute bottom-1.5 right-3 text-[10.5px] text-[var(--faint)]">shaded: barrier up · up/down: how they differ</span>
+      </div>
+      <div className="mt-3">
+        <div className="flex items-baseline justify-between text-[12.5px] text-[var(--muted)]">
+          <span>Could the two still have fertile children together?</span>
+          <strong className="tabular-nums text-[var(--ink)]">{two ? "No" : `${Math.round(compat * 100)}%`}</strong>
+        </div>
+        <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-[var(--panel)]">
+          <div className="h-full rounded-full transition-all" style={{ width: `${compat * 100}%`, background: compat > 0.5 ? "#0c9a56" : compat > 0.2 ? "#e0a200" : "#e8703a" }} />
+        </div>
+      </div>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => {
+            if (t >= SPLIT_TICKS) return;
+            setSt((s) => ({ ...s, barrier: !s.barrier }));
+            setPlaying(true);
+          }}
+          disabled={t >= SPLIT_TICKS}
+          className="rounded-full bg-[var(--ink)] px-4 py-1.5 text-[12.5px] font-medium text-white transition hover:bg-[var(--green-deep)] disabled:opacity-40"
+        >
+          {st.barrier ? "Remove the barrier" : "Raise a barrier"}
+        </button>
+        <button type="button" onClick={() => setPlaying((p) => !p)} disabled={t >= SPLIT_TICKS} className="rounded-full bg-[var(--panel)] px-4 py-1.5 text-[12.5px] font-medium text-[var(--ink)] transition hover:bg-[var(--line)] disabled:opacity-40">
+          {playing ? "Pause" : "Play"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            setPlaying(false);
+            setSt(SPLIT_START);
+          }}
+          className="rounded-full px-3 py-1.5 text-[12.5px] font-medium text-[var(--muted)] transition hover:bg-[var(--panel)]"
+        >
+          Start over
+        </button>
+      </div>
+      <p className="mt-2 text-[12px] leading-relaxed text-[var(--faint)]">
+        Try removing the barrier early, then late. A sea, a desert, an ice sheet or sheer distance can all be the barrier.
+      </p>
+    </div>
+  );
+}
+
 // ---------- section ----------
 
 const SEEN: { title: string; text: string }[] = [
@@ -557,7 +831,7 @@ const SEEN: { title: string; text: string }[] = [
 export function Mechanics() {
   return (
     <section id="how" className="mx-auto max-w-[1240px] px-5 pt-24 sm:px-8">
-      <SectionHeading kicker="How evolution works" title="Four simple processes, a very long time">
+      <SectionHeading kicker="How evolution works" title="A few simple processes, a very long time">
         Darwin saw that species change by natural selection but had no idea
         how traits are inherited. Mendel worked out inheritance and nobody
         noticed. In the 1930s and 40s the two were joined into what biologists
@@ -599,24 +873,25 @@ export function Mechanics() {
         >
           <DriftLab />
         </Panel>
+        <Panel
+          step="5 · Mixing"
+          title="Gene flow: populations leak into each other"
+          lede="Two valleys start out different: one mostly blue, one mostly orange. Whenever someone crosses the pass and has children on the other side, variants travel with them."
+          note="With no contact, chance fixes a different variant in each valley. Even a trickle of migrants keeps the two alike, and a steady flow makes them one population. This is how Neanderthal variants came to be in people living today.[@green-2010] Gene flow works against the splitting shown in the next panel."
+        >
+          <GeneFlowLab />
+        </Panel>
+        <Panel
+          step="6 · Splitting"
+          title="Speciation: one becomes two"
+          lede="When a barrier stops two parts of a population from interbreeding, mutation, selection and drift take them separate ways. Differences pile up, and some of them make hybrids less healthy or less fertile."
+          note="Take the barrier away early and the two halves blend back together. Leave it long enough and they stay separate even when they meet: two species. There is no single moment when it happens. Neanderthals and sapiens were partway along: apart for several hundred thousand years, still able to have children, but with signs that some hybrids were less fertile.[@sankararaman-2014] This is a cartoon; real barriers leak and real timing varies enormously."
+        >
+          <SpeciationLab />
+        </Panel>
       </div>
 
-      <div className="mt-5 grid gap-4 rounded-3xl bg-[var(--panel)] p-5 sm:p-6 md:grid-cols-2">
-        <div>
-          <h3 className="text-[15px] font-semibold text-[var(--ink)]">Two more ingredients</h3>
-          <p className="mt-1.5 text-[14px] leading-relaxed text-[var(--muted)]">
-            <strong className="font-semibold text-[var(--ink)]">Gene flow.</strong>{" "}
-            <Rich text="When populations meet and have children, variants move between them. Neanderthals and sapiens did exactly this, as the DNA section shows." />
-          </p>
-          <p className="mt-2 text-[14px] leading-relaxed text-[var(--muted)]">
-            <strong className="font-semibold text-[var(--ink)]">Separation.</strong>{" "}
-            When two populations stop exchanging genes, usually because of
-            distance or a barrier, mutation, selection and drift take them in
-            different directions. Given enough time they can no longer
-            interbreed, and one species has become two. The branching
-            diagrams on this site are records of that happening repeatedly.
-          </p>
-        </div>
+      <div className="mt-5 rounded-3xl bg-[var(--panel)] p-5 sm:p-6">
         <div>
           <h3 className="text-[15px] font-semibold text-[var(--ink)]">How long is long enough?</h3>
           <p className="mt-1.5 text-[14px] leading-relaxed text-[var(--muted)]">

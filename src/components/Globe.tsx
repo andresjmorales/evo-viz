@@ -7,6 +7,7 @@ import { geoEquirectangular, geoGraticule10, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import type { Topology } from "topojson-specification";
 import { sites } from "@/data/fossils";
+import { ICE_SHEETS, PRESENT_ICE_CLIP, iceFraction } from "@/data/ice";
 import { migrations } from "@/data/migrations";
 import { taxa } from "@/data/taxa";
 import { seaLevel } from "@/lib/climate";
@@ -59,6 +60,8 @@ const GLOBE_FRAG = /* glsl */ `
   uniform sampler2D uShelf;
   uniform float uDrop;
   uniform float uHasShelf;
+  uniform sampler2D uIce;
+  uniform float uIceF;
   varying vec2 vUv;
   varying vec3 vNormal;
   void main() {
@@ -70,6 +73,10 @@ const GLOBE_FRAG = /* glsl */ `
     // Texture values arrive in linear light: ocean green is near 0.05, land above 0.2.
     float isLand = smoothstep(0.09, 0.15, base.g);
     base = mix(base, vec3(0.3, 0.52, 0.3), exposed * (1.0 - isLand));
+    // Ice sheets grow out from their centres as sea level falls.
+    float iceCut = 1.0 - 0.5 * uIceF;
+    float ice = smoothstep(iceCut, iceCut + 0.05, texture2D(uIce, vUv).r) * step(0.01, uIceF);
+    base = mix(base, vec3(0.74, 0.86, 0.9), ice * 0.94);
     float light = max(dot(vNormal, normalize(vec3(-0.45, 0.55, 0.7))), 0.0);
     float shade = mix(0.5, 1.12, pow(light, 0.85));
     float rim = pow(1.0 - max(vNormal.z, 0.0), 3.0);
@@ -152,6 +159,25 @@ async function earthTexture(size: number): Promise<THREE.Texture> {
   landFill.addColorStop(1, "#3c9a74");
   ctx.fillStyle = landFill;
   ctx.fill();
+  // Greenland and Antarctica keep their ice whatever the sea level.
+  ctx.save();
+  ctx.beginPath();
+  PRESENT_ICE_CLIP.greenland.forEach(([lon, lat], i) => {
+    const [px, py] = [((lon + 180) / 360) * w, ((90 - lat) / 180) * h];
+    if (i) ctx.lineTo(px, py);
+    else ctx.moveTo(px, py);
+  });
+  ctx.closePath();
+  ctx.rect(0, ((90 - PRESENT_ICE_CLIP.antarcticaLat) / 180) * h, w, h);
+  ctx.clip();
+  ctx.beginPath();
+  path(land);
+  ctx.fillStyle = "#c9e4e6";
+  ctx.fill();
+  ctx.restore();
+
+  ctx.beginPath();
+  path(land);
   ctx.strokeStyle = "rgba(205, 255, 230, 0.55)";
   ctx.lineWidth = w / 3200;
   ctx.stroke();
@@ -159,6 +185,76 @@ async function earthTexture(size: number): Promise<THREE.Texture> {
   const tex = new THREE.CanvasTexture(canvas);
   tex.colorSpace = THREE.SRGBColorSpace;
   tex.anisotropy = 8;
+  return tex;
+}
+
+/**
+ * A soft mask of the glacial ice sheets: each sheet is filled, blurred, and
+ * combined by maximum, so the value is 0.5 at the full-glacial edge and rises
+ * toward each sheet's centre. The shader thresholds it by how much ice to show.
+ */
+function iceTexture(): THREE.Texture {
+  const W = 720;
+  const H = 360;
+  const c = document.createElement("canvas");
+  c.width = W;
+  c.height = H;
+  const g = c.getContext("2d", { willReadFrequently: true })!;
+  const acc = new Float32Array(W * H);
+  const buf = new Float32Array(W * H);
+  const tmp = new Float32Array(W * H);
+  const R = 6; // half-width of one box pass, in cells of half a degree
+  const blurH = (src: Float32Array, dst: Float32Array) => {
+    for (let y = 0; y < H; y++) {
+      const row = y * W;
+      let sum = 0;
+      for (let k = -R; k <= R; k++) sum += src[row + ((k + W) % W)];
+      for (let x = 0; x < W; x++) {
+        dst[row + x] = sum / (2 * R + 1);
+        sum += src[row + ((x + R + 1) % W)] - src[row + ((x - R + W) % W)];
+      }
+    }
+  };
+  const blurV = (src: Float32Array, dst: Float32Array) => {
+    for (let x = 0; x < W; x++) {
+      let sum = 0;
+      const at = (y: number) => src[Math.min(H - 1, Math.max(0, y)) * W + x];
+      for (let k = -R; k <= R; k++) sum += at(k);
+      for (let y = 0; y < H; y++) {
+        dst[y * W + x] = sum / (2 * R + 1);
+        sum += at(y + R + 1) - at(y - R);
+      }
+    }
+  };
+  for (const sheet of ICE_SHEETS) {
+    g.clearRect(0, 0, W, H);
+    g.fillStyle = "#fff";
+    g.beginPath();
+    sheet.ring.forEach(([lon, lat], i) => {
+      const px = ((lon + 180) / 360) * W;
+      const py = ((90 - lat) / 180) * H;
+      if (i) g.lineTo(px, py);
+      else g.moveTo(px, py);
+    });
+    g.closePath();
+    g.fill();
+    const px = g.getImageData(0, 0, W, H).data;
+    for (let i = 0; i < W * H; i++) buf[i] = px[i * 4 + 3] / 255;
+    for (let pass = 0; pass < 2; pass++) {
+      blurH(buf, tmp);
+      blurV(tmp, buf);
+    }
+    for (let i = 0; i < W * H; i++) acc[i] = Math.max(acc[i], buf[i]);
+  }
+  const img = g.createImageData(W, H);
+  for (let i = 0; i < W * H; i++) {
+    const v = Math.round(acc[i] * 255);
+    img.data[i * 4] = img.data[i * 4 + 1] = img.data[i * 4 + 2] = v;
+    img.data[i * 4 + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  const tex = new THREE.CanvasTexture(c);
+  tex.colorSpace = THREE.NoColorSpace;
   return tex;
 }
 
@@ -228,6 +324,8 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
         uShelf: { value: null },
         uDrop: { value: 0 },
         uHasShelf: { value: 0 },
+        uIce: { value: iceTexture() },
+        uIceF: { value: 0 },
       },
       vertexShader: GLOBE_VERT,
       fragmentShader: GLOBE_FRAG,
@@ -366,7 +464,9 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       const t = clock.getElapsedTime();
       const ka = timeStore.ka;
       const hl = highlightRef.current;
-      globeMat.uniforms.uDrop.value = Math.max(0, -seaLevel(ka));
+      const drop = Math.max(0, -seaLevel(ka));
+      globeMat.uniforms.uDrop.value = drop;
+      globeMat.uniforms.uIceF.value = iceFraction(drop);
 
       if (flyTo.current) {
         camDir.copy(camera.position).normalize();
@@ -471,6 +571,7 @@ export default function Globe({ highlight, focus, onPickTaxon }: GlobeProps) {
       ring.dispose();
       (globeMat.uniforms.uMap.value as THREE.Texture | null)?.dispose();
       shelfTex.dispose();
+      (globeMat.uniforms.uIce.value as THREE.Texture).dispose();
       renderer.dispose();
       renderer.domElement.remove();
       layer.replaceChildren();

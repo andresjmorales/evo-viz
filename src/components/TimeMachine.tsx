@@ -5,12 +5,14 @@ import { useEffect, useMemo, useState } from "react";
 import { getClaim } from "@/data/catalog";
 import { migrations } from "@/data/migrations";
 import { CHAPTERS, chapterIndexForKa, isAlive } from "@/data/story";
+import { STATURE_CM } from "@/data/figures";
 import { taxa } from "@/data/taxa";
-import { seaLevel } from "@/lib/climate";
+import { CLIMATE_START_KA, SEA_MEASURED_TO_KA, seaLevel } from "@/lib/climate";
+import { iceFraction } from "@/data/ice";
 import { taxonGlow } from "@/lib/palette";
 import { timeStore, useKaSelector, usePlaying } from "@/lib/timeStore";
 import { Scrubber } from "./Scrubber";
-import { StatusBadge, shortName, type OpenFn } from "./ui";
+import { Figure, StatusBadge, shortName, type OpenFn } from "./ui";
 
 const Globe = dynamic(() => import("./Globe"), { ssr: false });
 
@@ -19,6 +21,9 @@ const aliveIds = (ka: number) =>
     .filter((t) => isAlive(t.rangeStartKa, t.rangeEndKa, ka))
     .map((t) => t.id)
     .join(",");
+
+/** Silhouette height in px, on one scale so the line-up compares stature. */
+const figH = (id: string) => Math.round(((STATURE_CM[id] ?? 150) / 175) * 38);
 
 const routeIds = (ka: number) =>
   migrations
@@ -32,6 +37,16 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
   const routes = useKaSelector(routeIds, "");
   const playing = usePlaying();
   const sea = useKaSelector((k) => Math.round(seaLevel(k) / 5) * 5, 0);
+  const iceShown = useKaSelector((k) => iceFraction(Math.max(0, -seaLevel(k))) > 0.12, false);
+  const seaNote = useKaSelector(
+    (k) =>
+      k > CLIMATE_START_KA
+        ? "No sea-level record this far back: today’s coasts shown"
+        : k > SEA_MEASURED_TO_KA
+          ? "Sea level this far back is a rough estimate"
+          : "",
+    "",
+  );
   const [hover, setHover] = useState<string | null>(null);
   const chapter = CHAPTERS[chapterIdx];
   const claim = chapter.claimId ? getClaim(chapter.claimId) : undefined;
@@ -111,13 +126,22 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
                   onFocus={() => setHover(t.id)}
                   onBlur={() => setHover(null)}
                   onClick={() => onOpen({ kind: "taxon", id: t.id })}
-                  className="fade-up inline-flex items-center gap-2 rounded-full bg-white/[0.08] py-1.5 pl-2.5 pr-3 text-[13px] ring-1 ring-white/10 transition hover:bg-white/[0.16]"
+                  title={`${t.name}, about ${STATURE_CM[t.id]} cm tall`}
+                  className="fade-up group inline-flex items-end gap-2 rounded-2xl bg-white/[0.08] py-1.5 pl-2 pr-3 text-[13px] ring-1 ring-white/10 transition hover:bg-white/[0.16]"
                 >
                   <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ background: taxonGlow(t.id), boxShadow: `0 0 10px ${taxonGlow(t.id)}` }}
-                  />
-                  <em>{shortName(t.name)}</em>
+                    className="flex h-[38px] w-[26px] shrink-0 items-end justify-center"
+                    style={{ filter: `drop-shadow(0 0 5px ${taxonGlow(t.id)}80)` }}
+                  >
+                    <Figure
+                      taxonId={t.id}
+                      height={figH(t.id)}
+                      color={taxonGlow(t.id)}
+                      className="transition-transform duration-300 group-hover:scale-110"
+                      style={{ transformOrigin: "bottom" }}
+                    />
+                  </span>
+                  <em className="pb-0.5">{shortName(t.name)}</em>
                 </button>
               ))}
             </div>
@@ -144,14 +168,29 @@ export function TimeMachine({ onOpen }: { onOpen: OpenFn }) {
               </button>
             ))}
           </div>
-          <p
-            className={`pointer-events-none absolute left-4 top-2 flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10 transition-opacity duration-500 sm:left-6 ${
-              sea <= -10 ? "opacity-100" : "opacity-0"
+          <div
+            className={`pointer-events-none absolute left-4 top-2 flex flex-col items-start gap-1 transition-opacity duration-500 sm:left-6 ${
+              sea <= -10 || seaNote ? "opacity-100" : "opacity-0"
             }`}
           >
-            <span className="h-2 w-2 rounded-sm" style={{ background: "#9cc79a" }} />
-            Sea level {Math.abs(sea)} m lower: pale land was dry
-          </p>
+            {sea <= -10 ? (
+              <p className="flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10">
+                <span className="h-2 w-2 rounded-sm" style={{ background: "#9cc79a" }} />
+                Sea level {Math.abs(sea)} m lower: pale land was dry
+              </p>
+            ) : null}
+            {iceShown ? (
+              <p className="flex items-center gap-2 rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[11px] text-white/70 ring-1 ring-white/10">
+                <span className="h-2 w-2 rounded-sm" style={{ background: "#dcebee" }} />
+                White: ice sheets, outlines approximate
+              </p>
+            ) : null}
+            {seaNote ? (
+              <p className="rounded-full bg-[#031e14]/60 px-2.5 py-1 text-[10.5px] text-white/55 ring-1 ring-white/10">
+                {seaNote}
+              </p>
+            ) : null}
+          </div>
           <p className="pointer-events-none absolute right-4 top-2 hidden text-[11px] text-white/40 sm:block">
             Drag to spin{playing ? "" : " · press play or drag the timeline"}
           </p>

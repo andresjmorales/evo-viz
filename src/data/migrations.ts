@@ -557,8 +557,31 @@ export const migrations: Migration[] = [
     sea: [2],
     status: "contested",
     notes:
-      "Entry from Siberia across Beringia, dry land when seas were low, is settled. The date is not: footprints at White Sands point to people south of the ice by 23 to 21 thousand years ago,[@bennett-2021,pigati-2023] and Cooper’s Ferry is about 16 thousand.[@davis-2019] Much of this line lay under or beside ice sheets, which the globe does not show, so the first travellers probably kept to the coast.",
-    sourceIds: ["bennett-2021", "pigati-2023", "davis-2019", "bergstrom-2021"],
+      "Entry from Siberia across Beringia, dry land when seas were low, is settled. The date is not: footprints at White Sands point to people south of the ice by 23 to 21 thousand years ago,[@bennett-2021,pigati-2023] and Cooper’s Ferry is about 16 thousand.[@davis-2019] The line follows the Pacific coast, along the edge of the Cordilleran ice, now drawn on the globe. Dated boulders and bedrock show that stretches of that coast were free of ice by about 17 to 16 thousand years ago,[@lesnek-2018] while the inland corridor between the two great ice sheets became passable only later. How anyone was south of the ice by 23 thousand years ago is one of the open puzzles.",
+    sourceIds: ["bennett-2021", "pigati-2023", "davis-2019", "bergstrom-2021", "lesnek-2018"],
+  },
+  {
+    id: "ice-free-corridor",
+    taxonId: "sapiens",
+    label: "The ice-free corridor",
+    startKa: 13.5,
+    endKa: 12,
+    path: [
+      [65.5, -141],
+      [64, -136],
+      [62, -129],
+      [60, -124.5],
+      [58, -121],
+      [56.3, -118],
+      [54, -115],
+      [51.5, -113.5],
+      [49.5, -112.5],
+      [47, -111],
+    ],
+    status: "contested",
+    notes:
+      "As the Laurentide and Cordilleran ice sheets melted apart, a strip of land opened between them along the eastern foot of the Rockies. Ancient DNA from lake sediments shows plants and animals could live along its whole length only from about 12.6 thousand years ago,[@pedersen-2016] which is too late for the first Americans, who were already in South America by then.[@dillehay-2008] The corridor may still have carried later movements of people and animals in both directions.",
+    sourceIds: ["pedersen-2016", "dillehay-2008"],
   },
   {
     id: "south-america",

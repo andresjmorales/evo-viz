@@ -31,6 +31,12 @@ const CLIMATE_H = 58;
 const HEIGHT = CLIMATE_TOP + CLIMATE_H + 8;
 const cultureY = (row: number) => CULTURE_TOP + row * CROW + CROW / 2;
 const CULTURE_INK = "#3b4a5a";
+/** Rows covered by the group label that starts at row r. */
+const groupSpan = (r: number) => {
+  let n = 1;
+  while (r + n < CULTURE_ROWS.length && !CULTURE_ROWS[r + n]) n++;
+  return n;
+};
 const rowY = (i: number) => TOP + i * ROW + ROW / 2;
 
 const TICKS = [
@@ -296,7 +302,7 @@ export function FamilyTree({
               ))}
               {CULTURE_ROWS.map((label, r) =>
                 label ? (
-                  <div key={label} className="absolute left-0 right-0 flex items-center gap-2 pl-4 pr-2" style={{ top: CULTURE_TOP + r * CROW, height: CROW * 2 }}>
+                  <div key={label} className="absolute left-0 right-0 flex items-center gap-2 pl-4 pr-2" style={{ top: CULTURE_TOP + r * CROW, height: CROW * groupSpan(r) }}>
                     <span className="w-[3px] self-stretch rounded-full" style={{ background: CULTURE_INK, margin: "5px 0" }} />
                     <span className="text-[12px] font-semibold leading-tight text-[var(--ink)]">{label}</span>
                   </div>

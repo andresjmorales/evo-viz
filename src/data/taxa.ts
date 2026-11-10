@@ -17,11 +17,11 @@ export const taxa: Taxon[] = [
     summary:
       "One of the oldest fossils argued to sit on the human side of the chimpanzee–human split. The crushed cranium from Chad mixes a relatively flat face with a very small brain. Whether it walked upright, and whether it is a hominin at all, is still argued.",
     anatomy:
-      "Brain size in the ape range. A forward-placed foramen magnum is the main anatomical hint of bipedality, but the specimen is distorted and there is no associated pelvis or unambiguous femur published with the type.",
+      "Brain size in the ape range. The cranium is distorted, and a forward-placed foramen magnum was the first hint of upright walking.[@brunet-2002] A thigh bone and two forearm bones from the same site, published in 2022, were argued to show habitual bipedalism with some climbing;[@daver-2022] others doubt that the femur belongs to the same species or that it shows bipedalism at all.",
     behavior:
       "Unknown. Environment reconstructions point to a mosaic of woodland, grassland, and water.",
     discovery:
-      "Announced in 2002 by Michel Brunet’s team from Toros-Menalla, Djurab Desert, Chad. The nickname Toumaï means “hope of life” in the local Daza language.",
+      "Announced in 2002 by Michel Brunet’s team[@brunet-2002] from Toros-Menalla, Djurab Desert, Chad. The nickname Toumaï means “hope of life” in the local Daza language.",
     claimIds: ["sahel-hominin", "bipedalism-first"],
     fossilIds: ["tm266"],
     migrationIds: [],
@@ -51,7 +51,7 @@ export const taxa: Taxon[] = [
       "Femoral neck and groove anatomy have been read as habitual bipedality. Canines are reduced relative to living apes. No cranium.",
     behavior: "Forest to woodland settings in the Tugen Hills.",
     discovery:
-      "Described in 2001 by Senut, Pickford and colleagues from the Lukeino Formation, Kenya.",
+      "Described in 2001 by Senut, Pickford and colleagues from the Lukeino Formation, Kenya.[@senut-2001]",
     claimIds: ["bipedalism-first"],
     fossilIds: [],
     migrationIds: [],
@@ -84,7 +84,7 @@ export const taxa: Taxon[] = [
     behavior:
       "Woodland omnivore. The team argued against a knuckle-walking chimpanzee-like ancestor, which remains a live debate.",
     discovery:
-      "First teeth in the 1990s; the ARA-VP-6/500 skeleton published in a 2009 Science package led by Tim White, Gen Suwa, and C. Owen Lovejoy.",
+      "First teeth in the 1990s; the ARA-VP-6/500 skeleton published in a 2009 Science package led by Tim White, Gen Suwa, and C. Owen Lovejoy.[@white-2009]",
     claimIds: ["bipedalism-first", "not-a-chimp"],
     fossilIds: ["ardi"],
     migrationIds: [],
@@ -149,7 +149,7 @@ export const taxa: Taxon[] = [
     behavior:
       "Terrestrial biped that likely still slept or foraged in trees. Stone tools are not securely associated; cut-marked bones in the 3.4 Ma range remain debated.",
     discovery:
-      "Lucy (AL 288-1) found at Hadar in 1974 by Donald Johanson’s team. The species was named in 1978; the “First Family” and Dikika child expanded the sample.",
+      "Lucy (AL 288-1) found at Hadar in 1974 by Donald Johanson’s team. The species was named in 1978; the “First Family” and Dikika child expanded the sample.[@johanson-1976]",
     claimIds: ["bipedalism-first", "lucy-ancestor", "tools-who"],
     fossilIds: ["lucy", "laetoli"],
     migrationIds: [],
@@ -180,7 +180,7 @@ export const taxa: Taxon[] = [
       "Less prognathic than afarensis, slightly larger brain, human-like deciduous teeth in Taung. Postcrania still mix climbing and walking.",
     behavior: "Cave taphonomy is messy: many individuals were leopard or bird prey.",
     discovery:
-      "Raymond Dart named the Taung Child in 1925. Acceptance took decades because the Piltdown fraud still haunted British anatomy.",
+      "Raymond Dart named the Taung Child in 1925.[@dart-1925] Acceptance took decades, partly because the Piltdown forgery, not exposed until 1953, had persuaded British anatomists that a large brain came before an upright, human-like face and teeth.",
     claimIds: ["lucy-ancestor"],
     fossilIds: ["taung", "mrs-ples"],
     migrationIds: [],
@@ -210,7 +210,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Homo-like pelvis and hands in some respects; tiny brain; heel and foot still primitive. The mosaic is the point: evolution did not flip every trait at once.",
     behavior: "Possibly still a climber. Associated fauna suggest a wooded, wet setting.",
-    discovery: "Lee Berger’s son Matthew found the first clavicle at Malapa in 2008.",
+    discovery: "Lee Berger’s son Matthew found the first fossil, a collarbone, at Malapa in 2008.[@berger-2010]",
     claimIds: ["lucy-ancestor", "early-homo-mess"],
     fossilIds: [],
     migrationIds: [],
@@ -240,7 +240,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Hyper-robust chewing complex. Brain still ~500 cc. Postcrania, where known, are bipedal.",
     behavior:
-      "Stable-isotope work suggests a diet heavy in C4 resources (grasses, sedges, or animals that ate them), so hard nuts were at most part of the menu. The nickname is partly misleading.",
+      "Stable-isotope work suggests a diet heavy in C4 resources[@cerling-2011] (grasses, sedges, or animals that ate them), so hard nuts were at most part of the menu. The nickname is partly misleading.",
     discovery:
       "OH 5 (“Zinjanthropus”) found by Mary Leakey at Olduvai in 1959; later reassigned to Paranthropus/Australopithecus boisei.",
     claimIds: ["paranthropus-side"],
@@ -305,7 +305,7 @@ export const taxa: Taxon[] = [
     behavior:
       "Oldowan cores and flakes appear in East Africa by ~2.6 Ma, slightly before most habilis fossils. Tool use is inferred for most specimens.",
     discovery:
-      "Named in 1964 by Louis Leakey, Phillip Tobias, and John Napier, expanding the definition of Homo to include a smaller brain if tools were present.",
+      "Named in 1964 by Louis Leakey, Phillip Tobias, and John Napier, expanding the definition of Homo to include a smaller brain if tools were present.[@leakey-1964]",
     claimIds: ["early-homo-mess", "tools-who"],
     fossilIds: ["oh7", "knm-er-1813"],
     migrationIds: [],
@@ -369,7 +369,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Long legs, barrel-ish chest, projecting nose in later forms, thick brow, receding forehead, no chin. Brain size increases through time. The Nariokotome boy (WT 15000) is the iconic adolescent skeleton.",
     behavior:
-      "Acheulean handaxes in Africa and western Eurasia; East Asian assemblages often lack classic Acheulean. Control of fire is attested by the later Pleistocene; earliest fire claims are contested. Persistence hunting and endurance running have been hypothesized from anatomy.",
+      "Acheulean handaxes in Africa and western Eurasia; East Asian assemblages often lack classic Acheulean. Ash and burnt bone deep in Wonderwerk Cave, about a million years old, are the oldest strong evidence of fire use, probably by erectus;[@berna-2012] older claims are contested. Persistence hunting and endurance running have been hypothesized from anatomy.",
     discovery:
       "Eugène Dubois found the Trinil skullcap on Java in 1891. African fossils (Turkana, Olduvai) later filled in the origin story.",
     claimIds: ["out-of-africa-1", "fire", "erectus-one-species"],
@@ -403,8 +403,8 @@ export const taxa: Taxon[] = [
       "A tiny Late Pleistocene hominin from Flores with a chimpanzee-sized brain and a unique mix of primitive and derived traits. Island dwarfism from an erectus-like ancestor is the leading idea; a more primitive origin is still on the table. Pathological modern human is no longer a serious model.",
     anatomy:
       "LB1 skull ~426 cc, short legs, unusual wrist and shoulder, large feet. Stone tools at the site are simple flakes.",
-    behavior: "Hunted Stegodon and Komodo dragons in an island world without other humans until sapiens arrived.",
-    discovery: "Described in 2004 by Brown, Morwood and colleagues from Liang Bua cave.",
+    behavior: "Shared Flores with dwarf elephant-like Stegodon, giant rats and Komodo dragons. The species’ bones are 100 to 60 thousand years old and its tools 190 to 50 thousand.[@sutikna-2016]",
+    discovery: "Described in 2004 by Brown, Morwood and colleagues from Liang Bua cave.[@brown-2004]",
     claimIds: ["island-dwarfs"],
     fossilIds: ["lb1"],
     migrationIds: [],
@@ -436,7 +436,7 @@ export const taxa: Taxon[] = [
     behavior:
       "How bodies got deep into the cave is the fight: deliberate disposal, a death trap, or something in between. No stone tools are securely tied to the species.",
     discovery:
-      "Announced in 2015 by Lee Berger and the Rising Star team. Direct dates in 2017 placed it shockingly recently.",
+      "Announced in 2015 by Lee Berger and the Rising Star team.[@berger-2015] Direct dates in 2017 placed it shockingly recently, between 335 and 236 thousand years ago.[@dirks-2017]",
     claimIds: ["naledi-recent", "naledi-burial"],
     fossilIds: ["naledi-dinaledi"],
     migrationIds: [],
@@ -466,7 +466,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Modern-like midface projection, still robust elsewhere. Adolescent specimen ATD6-69 is the face people remember.",
     behavior:
-      "Cut marks on hominin bones at the site are widely read as cannibalism. Mode 2 tools.",
+      "Cut marks on hominin bones at the site are widely read as cannibalism. As at the older Sima del Elefante site nearby,[@carbonell-2008] the stone tools are simple cores and flakes, without handaxes.",
     discovery: "Named in 1997 by Bermúdez de Castro, Arsuaga, Carbonell and colleagues.",
     claimIds: ["heidelberg-real"],
     fossilIds: [],
@@ -501,7 +501,7 @@ export const taxa: Taxon[] = [
     anatomy:
       "Brain size overlapping modern humans, still a thick continuous brow, no true chin, robust skeleton. Sima de los Huesos people are often now called early Neanderthals rather than heidelbergensis.",
     behavior:
-      "Wooden spears at Schöningen (~300 ka), prepared-core stone technology, hunting of large mammals. Hearths become more convincing in this time range.",
+      "Prepared-core stone technology and hunting of large mammals. The wooden spears from Schöningen, long dated to about 300 ka and credited to this group, were re-dated in 2025 to about 200 ka, which makes Neanderthals their likelier makers.[@hutson-2025] Hearths become more convincing in this time range.",
     discovery:
       "Mauer sand pit, Germany, 1907–1908. The species has been repeatedly redefined as samples and dates improved.",
     claimIds: ["heidelberg-real", "lca-neand-sapiens", "craig-adam"],
@@ -538,7 +538,7 @@ export const taxa: Taxon[] = [
     behavior:
       "Mousterian tools, hafting, fire, hunting of prime-age ungulates. Ornament and pigment use is documented; the “dumb brute” cartoon is dead. Burial is plausible at some sites and contested at others. Language capacity is an inference from anatomy and genes.",
     discovery:
-      "Feldhofer Cave, Neander Valley, 1856, was the first fossil recognized as a distinct ancient human. The genome was sequenced in 2010.",
+      "Feldhofer Cave, Neander Valley, 1856, was the first fossil recognized as a distinct ancient human. The genome was sequenced in 2010.[@green-2010]",
     claimIds: [
       "denisovan-distinct",
       "neanderthal-mind",
@@ -578,7 +578,7 @@ export const taxa: Taxon[] = [
     behavior:
       "Occupied Denisova Cave in alternating or overlapping pulses with Neanderthals. High-altitude adaptation (EPAS1) in modern Tibetans traces to Denisovan-like ancestry. Multiple introgression pulses into ancestors of Papuans and other Eurasian groups.",
     discovery:
-      "mtDNA in 2010 (Krause), nuclear genome the same year (Reich). Xiahe mandible identified as Denisovan by proteomics and mtDNA in 2019.",
+      "mtDNA in 2010 (Krause), nuclear genome the same year (Reich).[@krause-2010,reich-2010] Xiahe mandible identified as Denisovan from its ancient proteins in 2019.[@chen-2019]",
     claimIds: [
       "denisovan-distinct",
       "longi-denisovan",
@@ -617,7 +617,7 @@ export const taxa: Taxon[] = [
       "Massive cranium, long and low vault, large orbits, wide upper face, large brain. Mosaic of archaic and derived traits.",
     behavior: "Unknown beyond Middle Pleistocene East Asian archaeology in the same range.",
     discovery:
-      "Harbin skull reportedly found in 1933; scientific description and name in 2021. Yunxian 2 restudy in Science, 2025.",
+      "Harbin skull reportedly found in 1933; scientific description and name in 2021.[@ji-2021] Yunxian 2 restudy in Science, 2025.[@feng-2025] Later in 2025, protein and mitochondrial DNA recovered from the Harbin skull matched the Denisovans,[@fu-2025-proteome,fu-2025-mtdna] so Homo longi and the Denisovans are increasingly treated as one population.",
     claimIds: ["longi-denisovan", "lca-neand-sapiens"],
     fossilIds: ["harbin", "yunxian"],
     migrationIds: [],
@@ -646,13 +646,13 @@ export const taxa: Taxon[] = [
     sites: ["irhoud", "omo", "herto", "qafzeh", "kro-san"],
     regions: ["Africa, then worldwide"],
     summary:
-      "Anatomically modern humans. The oldest widely accepted fossils are from Jebel Irhoud, Morocco (~315 ka), with later African sites (Omo, Herto) showing more modern faces. Most specialists now picture a structured African origin rather than a single Garden-of-Eden population. We mixed with Neanderthals and Denisovans after leaving Africa.",
+      "Anatomically modern humans. The oldest widely accepted fossils are from Jebel Irhoud, Morocco (~315 ka),[@hublin-2017] with later African sites (Omo, Herto) showing more modern faces. Most specialists now picture a structured African origin rather than a single Garden-of-Eden population. We mixed with Neanderthals and Denisovans after leaving Africa.",
     anatomy:
       "Globular braincase, reduced brow, canine fossa, chin, lightly built skeleton. The globular vault and small face accumulate through the late Middle Pleistocene; Irhoud is still archaic in the braincase.",
     behavior:
       "Symbolic behavior has deep African roots (pigment, beads, engraved ochre) well before the European Upper Paleolithic “revolution.” Later: agriculture, cities, this website.",
     discovery:
-      "Linnaeus, 1758. Fossil recognition of our own antiquity unfolded across the 19th and 20th centuries; African origin became consensus in the 1980s and was then complicated by ancient DNA.",
+      "Linnaeus, 1758. Fossil recognition of our own antiquity unfolded across the 19th and 20th centuries; An African origin gained the upper hand from the late 1980s, as genetic and fossil evidence accumulated, and was then complicated by ancient DNA showing interbreeding.[@green-2010]",
     claimIds: [
       "african-origin",
       "structured-africa",
@@ -662,7 +662,7 @@ export const taxa: Taxon[] = [
       "craig-adam",
     ],
     fossilIds: ["irhoud", "qafzeh6", "cro-magnon"],
-    migrationIds: ["ooa2", "sahul", "americas", "europe-up"],
+    migrationIds: ["ooa2", "sahul", "americas", "ice-free-corridor", "europe-up"],
     morph: {
       vault: 0.95,
       brow: 0.18,

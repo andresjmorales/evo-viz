@@ -16,7 +16,7 @@ export const glossary: Term[] = [
   { id: "foramen-magnum", term: "foramen magnum", def: "The hole at the base of the skull where the spinal cord exits. It sits further forward in animals that hold the head on top of an upright spine." },
   { id: "prognathism", term: "prognathism", aliases: ["prognathic"], def: "Forward projection of the jaws beyond the upper face. Strong in apes and early hominins, slight in modern humans." },
   { id: "sagittal-crest", term: "sagittal crest", def: "A ridge of bone along the top of the skull that anchors very large chewing muscles. Seen in gorillas and in Paranthropus." },
-  { id: "brow-ridge", term: "brow ridge", aliases: ["brow ridges", "supraorbital torus"], def: "A bar of bone above the eye sockets. Heavy in Homo erectus and Neanderthals, nearly absent in modern humans." },
+  { id: "brow-ridge", term: "brow ridge", aliases: ["brow ridges", "supraorbital torus"], def: "A bar of bone above the eye sockets. Heavy in Homo erectus and Neanderthals, small and usually split in two in modern humans." },
   { id: "occipital-bun", term: "occipital bun", def: "A rounded bulge at the back of the skull, typical of Neanderthals." },
   { id: "canine", term: "canines", aliases: ["canine teeth"], def: "The pointed teeth beside the incisors. Male apes have large, sharpened ones; reduced canines are one of the earliest hominin traits." },
   { id: "dimorphism", term: "sexual dimorphism", def: "Difference in size or shape between males and females of a species. High dimorphism in early hominins makes it hard to tell one variable species from two." },
