@@ -12,8 +12,11 @@ import {
   type ReactNode,
 } from "react";
 import { getClaim, getFossil, getSource, getTaxon, getTheory, searchAll } from "@/data/catalog";
+import { culture, cultureById } from "@/data/culture";
 import { glossary, termById } from "@/data/glossary";
+import { methodById, methods } from "@/data/methods";
 import { migrations } from "@/data/migrations";
+import { stripCites } from "@/lib/format";
 import { notebook, useNotebook, type NoteItem } from "@/lib/notebook";
 import { taxonColor } from "@/lib/palette";
 import { Drawer } from "./Drawer";
@@ -28,7 +31,7 @@ interface WorkspaceCtx {
 const Ctx = createContext<WorkspaceCtx>({ open: () => {}, selectedTaxon: null });
 export const useWorkspace = () => useContext(Ctx);
 
-const PAGE_KINDS = ["taxon", "claim", "theory", "fossil", "route"];
+const PAGE_KINDS = ["taxon", "claim", "theory", "fossil", "route", "culture", "method"];
 
 function parseHash(): PanelTarget | null {
   const m = window.location.hash.match(/^#\/(\w+)\/([\w-]+)$/);
@@ -78,6 +81,16 @@ export function Workspace({
       window.history.replaceState(null, "", want || window.location.pathname + window.location.search);
     }
   }, [top, open]);
+
+  // Follow links to items that arrive while the page is already open.
+  useEffect(() => {
+    const onHash = () => {
+      const t = parseHash();
+      if (t) open(t);
+    };
+    window.addEventListener("hashchange", onHash);
+    return () => window.removeEventListener("hashchange", onHash);
+  }, [open]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -182,6 +195,14 @@ function describe(i: { kind: string; id: string }): { title: string; meta: strin
       const m = migrations.find((x) => x.id === i.id);
       return m ? { title: m.label, meta: "Journey" } : null;
     }
+    case "culture": {
+      const c = cultureById[i.id];
+      return c ? { title: c.label, meta: "Tools and behaviour" } : null;
+    }
+    case "method": {
+      const m = methodById[i.id];
+      return m ? { title: m.title, meta: "How we know" } : null;
+    }
     case "source": {
       const s = getSource(i.id);
       return s ? { title: s.title, meta: [s.authors, s.year].filter(Boolean).join(", "), url: s.url } : null;
@@ -204,7 +225,7 @@ function toMarkdown(items: NoteItem[], scratch: string): string {
     lines.push(`## ${d.title}`, `_${d.meta}_`, "");
     if (i.kind === "claim") {
       const c = getClaim(i.id)!;
-      lines.push(c.summary, "", `Why this grade: ${c.statusRationale}`, "");
+      lines.push(stripCites(c.summary), "", `Why this grade: ${c.statusRationale}`, "");
       for (const sid of c.sourceIds) {
         const s = getSource(sid);
         if (s) lines.push(`- ${[s.authors, s.year].filter(Boolean).join(" ")}. ${s.title}. ${s.url}`);
@@ -325,7 +346,16 @@ function Search({ onOpen, onClose }: { onOpen: (t: PanelTarget) => void; onClose
       ? []
       : glossary.filter((g) => [g.term, ...(g.aliases ?? [])].some((a) => a.toLowerCase().includes(n)));
   }, [q]);
-  const total = r.taxa.length + r.claims.length + r.theories.length + r.fossils.length + terms.length;
+  const extra = useMemo(() => {
+    const n = q.trim().toLowerCase();
+    if (n.length < 2) return { culture: [], methods: [] };
+    return {
+      culture: culture.filter((c) => (c.label + " " + c.summary).toLowerCase().includes(n)),
+      methods: methods.filter((m) => (m.title + " " + m.short + " " + m.body.join(" ")).toLowerCase().includes(n)),
+    };
+  }, [q]);
+  const total =
+    r.taxa.length + r.claims.length + r.theories.length + r.fossils.length + terms.length + extra.culture.length + extra.methods.length;
   useEffect(() => {
     input.current?.focus();
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -368,6 +398,8 @@ function Search({ onOpen, onClose }: { onOpen: (t: PanelTarget) => void; onClose
               {group("Species", r.taxa.map((t) => row(t.id, () => onOpen({ kind: "taxon", id: t.id }), <><span className="mr-2 inline-block h-2 w-2 rounded-full" style={{ background: taxonColor(t.id) }} /><em>{t.name}</em></>, t.nickname)))}
               {group("Questions", r.claims.map((c) => row(c.id, () => onOpen({ kind: "claim", id: c.id }), c.question, <StatusBadge status={c.status} compact />)))}
               {group("Fossils", r.fossils.map((f) => row(f.id, () => onOpen({ kind: "fossil", id: f.id }), f.name, f.site)))}
+              {group("Tools and behaviour", extra.culture.map((c) => row(c.id, () => onOpen({ kind: "culture", id: c.id }), c.label, <StatusBadge status={c.status} compact />)))}
+              {group("How we know", extra.methods.map((m) => row(m.id, () => onOpen({ kind: "method", id: m.id }), m.title, "method")))}
               {terms.length ? (
                 <div className="mt-3">
                   <p className="kicker px-3 pb-1 text-[10.5px] text-[var(--faint)]">Glossary</p>

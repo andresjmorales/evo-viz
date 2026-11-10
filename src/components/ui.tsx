@@ -11,7 +11,9 @@ export type PanelTarget =
   | { kind: "claim"; id: string }
   | { kind: "theory"; id: string }
   | { kind: "fossil"; id: string }
-  | { kind: "route"; id: string };
+  | { kind: "route"; id: string }
+  | { kind: "culture"; id: string }
+  | { kind: "method"; id: string };
 
 export type OpenFn = (t: PanelTarget) => void;
 

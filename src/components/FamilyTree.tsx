@@ -1,11 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { CULTURE_ROWS, culture } from "@/data/culture";
 import { LANES } from "@/data/lanes";
 import { GENE_FLOW } from "@/data/story";
 import { taxa } from "@/data/taxa";
 import { theories } from "@/data/theories";
 import { formatKa, formatRange } from "@/lib/format";
+import { CLIMATE_START_KA, D18O_SERIES, d18o, seaLevel } from "@/lib/climate";
 import { LANE_COLORS, THEORY_COLOR, taxonColor } from "@/lib/palette";
 import { kaToX, xToKa } from "@/lib/timeScale";
 import { timeStore, useKa } from "@/lib/timeStore";
@@ -21,7 +23,14 @@ const ordered = [...taxa].sort(
   (a, b) => a.lane - b.lane || b.rangeStartKa - a.rangeStartKa,
 );
 const rowOf = Object.fromEntries(ordered.map((t, i) => [t.id, i]));
-const HEIGHT = TOP + ordered.length * ROW + 10;
+const SPECIES_BOTTOM = TOP + ordered.length * ROW;
+const CROW = 24;
+const CULTURE_TOP = SPECIES_BOTTOM + 12;
+const CLIMATE_TOP = CULTURE_TOP + CULTURE_ROWS.length * CROW + 12;
+const CLIMATE_H = 58;
+const HEIGHT = CLIMATE_TOP + CLIMATE_H + 8;
+const cultureY = (row: number) => CULTURE_TOP + row * CROW + CROW / 2;
+const CULTURE_INK = "#3b4a5a";
 const rowY = (i: number) => TOP + i * ROW + ROW / 2;
 
 const TICKS = [
@@ -139,6 +148,59 @@ export function FamilyTree({
     return out;
   }, [x]);
 
+  // Tools and behaviour: place each label beside its mark where there is room.
+  const cultureMarks = useMemo(() => {
+    const rows = CULTURE_ROWS.map((_, r) =>
+      culture
+        .filter((c) => c.row === r)
+        .map((c) => {
+          const point = c.startKa === c.endKa;
+          const x0 = x(c.startKa) - (point ? 6 : 0);
+          const x1 = point ? x(c.startKa) + 6 : Math.max(x(c.endKa), x0 + 8);
+          return { c, point, x0, x1, w: c.label.length * 5.8, labelX: null as number | null, anchor: "start" as "start" | "end" | "middle" };
+        })
+        .sort((a, b) => a.x0 - b.x0),
+    );
+    for (const row of rows) {
+      let busyUntil = 0;
+      row.forEach((m, i) => {
+        const next = row[i + 1];
+        if (m.x1 + 8 + m.w < (next ? next.x0 - 6 : W - 4)) {
+          m.labelX = m.x1 + 7;
+          busyUntil = m.x1 + 8 + m.w;
+        } else if (m.x0 - 8 - m.w > busyUntil) {
+          m.labelX = m.x0 - 7;
+          m.anchor = "end";
+          busyUntil = m.x1;
+        } else {
+          // No room beside it: sit the label on the bar if the bar is long enough.
+          if (!m.point && m.x1 - m.x0 > m.w + 12) {
+            m.labelX = (m.x0 + m.x1) / 2;
+            m.anchor = "middle";
+          }
+          busyUntil = m.x1;
+        }
+      });
+    }
+    return rows.flat();
+  }, [x, W]);
+
+  // The oxygen-isotope climate curve, warm at the top.
+  const climate = useMemo(() => {
+    const yOf = (v: number) => CLIMATE_TOP + 6 + ((v - 2.6) / (5.1 - 2.6)) * (CLIMATE_H - 12);
+    let d = "";
+    let lastPx = -1;
+    for (let i = D18O_SERIES.length - 1; i >= 0; i--) {
+      const [t, v] = D18O_SERIES[i];
+      const px = x(t);
+      if (px - lastPx < 0.7 && i !== 0) continue;
+      d += `${d ? "L" : "M"}${px.toFixed(1)} ${yOf(v).toFixed(1)}`;
+      lastPx = px;
+    }
+    return { d, yOf };
+  }, [x]);
+  const nowD18o = d18o(ka);
+
   const overlays = theories.filter((t) => t.overlay && activeTheories.includes(t.id));
   // Extra rows under the tree for overlay name tags, so they never cover a bar.
   const svgH = HEIGHT + (overlays.length ? Math.min(3, overlays.length) * 24 + 8 : 0);
@@ -159,9 +221,11 @@ export function FamilyTree({
     <section id="tree" className="mt-24 bg-[var(--panel)] py-20">
       <div className="mx-auto max-w-[1240px] px-5 sm:px-8">
         <SectionHeading kicker="The family tree" title="Every species, on one timeline">
-          Each bar is a species, placed where its fossils are dated. Click a
-          bar to read about it. Zoom in on the crowded last half-million years,
-          or switch on a model of Adam and Eve to see where it would sit.
+          Each bar is a species, placed where its fossils are dated. Beneath
+          them run the tools and behaviours people left behind, and the
+          planet’s climate. Click anything to read about it, zoom in on the
+          crowded last half-million years, or switch on a model of Adam and
+          Eve to see where it would sit.
         </SectionHeading>
 
         <div className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -230,6 +294,21 @@ export function FamilyTree({
                   <span className="text-[12px] font-semibold leading-tight text-[var(--ink)]">{lane.label}</span>
                 </div>
               ))}
+              {CULTURE_ROWS.map((label, r) =>
+                label ? (
+                  <div key={label} className="absolute left-0 right-0 flex items-center gap-2 pl-4 pr-2" style={{ top: CULTURE_TOP + r * CROW, height: CROW * 2 }}>
+                    <span className="w-[3px] self-stretch rounded-full" style={{ background: CULTURE_INK, margin: "5px 0" }} />
+                    <span className="text-[12px] font-semibold leading-tight text-[var(--ink)]">{label}</span>
+                  </div>
+                ) : null,
+              )}
+              <div className="absolute left-0 right-0 flex items-center gap-2 pl-4 pr-2" style={{ top: CLIMATE_TOP, height: CLIMATE_H }}>
+                <span className="w-[3px] self-stretch rounded-full bg-[#2a78e4]" style={{ margin: "5px 0" }} />
+                <span className="text-[12px] leading-tight">
+                  <span className="font-semibold text-[var(--ink)]">Global climate</span>
+                  <span className="block text-[10.5px] text-[var(--faint)]">warm ↑ · ice age ↓</span>
+                </span>
+              </div>
             </div>
           ) : null}
           <div ref={scroller} className="thin-scroll relative min-w-0 flex-1 overflow-x-auto overflow-y-hidden">
@@ -285,7 +364,7 @@ export function FamilyTree({
                       <line x1={x1} x2={x1} y1={TOP - 6} y2={HEIGHT} stroke={color} strokeWidth={1.2} strokeDasharray="4 3" />
                       {t.genealogicalWave && r !== undefined ? (
                         <path
-                          d={`M${x1} ${rowY(r)} L${x(0)} ${TOP} L${x(0)} ${HEIGHT - 4} Z`}
+                          d={`M${x1} ${rowY(r)} L${x(0)} ${TOP} L${x(0)} ${SPECIES_BOTTOM} Z`}
                           fill={color}
                           opacity={0.14}
                         />
@@ -367,6 +446,77 @@ export function FamilyTree({
                   );
                 })}
 
+                <line x1={0} x2={W} y1={SPECIES_BOTTOM + 5} y2={SPECIES_BOTTOM + 5} stroke="#dde7e0" />
+                {cultureMarks.map(({ c, point, x0, x1, labelX, anchor }) => {
+                  const y = cultureY(c.row);
+                  const cx = x(c.startKa);
+                  return (
+                    <g
+                      key={c.id}
+                      data-hit
+                      role="button"
+                      tabIndex={0}
+                      aria-label={c.label}
+                      onClick={() => onOpen({ kind: "culture", id: c.id })}
+                      onKeyDown={(e) => e.key === "Enter" && onOpen({ kind: "culture", id: c.id })}
+                      className="group cursor-pointer outline-none"
+                    >
+                      <title>{c.label}</title>
+                      <rect x={x0 - 4} y={y - CROW / 2} width={x1 - x0 + 8 + (labelX !== null && anchor === "start" ? c.label.length * 6.1 + 8 : 0)} height={CROW} fill="transparent" />
+                      {point ? (
+                        <path d={`M${cx} ${y - 6} l6 6 l-6 6 l-6 -6 z`} fill={CULTURE_INK} className="group-hover:fill-[var(--green)] group-focus-visible:fill-[var(--green)]" />
+                      ) : (
+                        <rect x={x0} y={y - 4} width={x1 - x0} height={8} rx={4} fill={CULTURE_INK} opacity={0.82} className="group-hover:fill-[var(--green)] group-hover:opacity-100 group-focus-visible:fill-[var(--green)]" />
+                      )}
+                      {labelX !== null && anchor === "middle" ? (
+                        <rect x={labelX - c.label.length * 2.95 - 6} y={y - 8} width={c.label.length * 5.9 + 12} height={16} rx={8} fill="#fff" />
+                      ) : null}
+                      {labelX !== null ? (
+                        <text x={labelX} y={y + 4} textAnchor={anchor} fontSize="11.5" fill="#0d2118" stroke="#fff" strokeWidth={anchor === "middle" ? 0 : 3} paintOrder="stroke" className="group-hover:underline">
+                          {c.label}
+                        </text>
+                      ) : null}
+                    </g>
+                  );
+                })}
+
+                <g
+                  data-hit
+                  role="button"
+                  tabIndex={0}
+                  aria-label="Global climate record"
+                  className="cursor-pointer outline-none"
+                  onClick={() => onOpen({ kind: "claim", id: "climate-driver" })}
+                  onKeyDown={(e) => e.key === "Enter" && onOpen({ kind: "claim", id: "climate-driver" })}
+                >
+                  <title>Deep-sea oxygen isotopes: a record of global ice volume and temperature</title>
+                  <rect x={0} y={CLIMATE_TOP} width={W} height={CLIMATE_H} fill="#f3f7fd" />
+                  {x(CLIMATE_START_KA) > 150 ? (
+                    <text x={x(CLIMATE_START_KA) - 10} y={CLIMATE_TOP + CLIMATE_H / 2 + 4} textAnchor="end" fontSize="10.5" fill="#8a9a91">
+                      record starts here
+                    </text>
+                  ) : null}
+                  <path d={climate.d} fill="none" stroke="#2a78e4" strokeWidth={1.3} strokeLinejoin="round" />
+                  {nowD18o !== null ? (
+                    <>
+                      <circle cx={x(ka)} cy={climate.yOf(nowD18o)} r={3.5} fill="#fff" stroke="#2a78e4" strokeWidth={2} />
+                      <text
+                        x={x(ka) + (x(ka) > W - 150 ? -8 : 8)}
+                        y={CLIMATE_TOP + 12}
+                        textAnchor={x(ka) > W - 150 ? "end" : "start"}
+                        fontSize="10.5"
+                        fill="#2a5fb0"
+                        stroke="#f3f7fd"
+                        strokeWidth={3}
+                        paintOrder="stroke"
+                      >
+                        sea level {Math.round(seaLevel(ka) / 5) * 5 > 0 ? "+" : ""}
+                        {Math.round(seaLevel(ka) / 5) * 5} m
+                      </text>
+                    </>
+                  ) : null}
+                </g>
+
                 {GENE_FLOW.map((g) => {
                   const gx = x(g.ka);
                   const ya = rowY(rowOf[g.a]);
@@ -439,6 +589,10 @@ export function FamilyTree({
           <span className="inline-flex items-center gap-2">
             <svg width="12" height="14"><path d="M0 0 h12 v5 l-6 6 l-6 -6 z" fill="#0d2118" /></svg>
             the moment shown on the globe ({formatKa(ka)}). Drag it, or click anywhere.
+          </span>
+          <span className="inline-flex items-center gap-2">
+            <svg width="30" height="14"><path d="M9 1 l6 6 l-6 6 l-6 -6 z" fill="#3b4a5a" /><rect x="18" y="3" width="12" height="8" rx="4" fill="#3b4a5a" /></svg>
+            a dated find, and a lasting tradition
           </span>
         </div>
       </div>

@@ -16,14 +16,14 @@ import { Figure, StatusBadge } from "./ui";
 
 /** Which questions are discussed under which chapter. */
 const CLAIMS_BY_CHAPTER: Record<string, string[]> = {
-  split: ["sahel-hominin", "not-a-chimp"],
-  walk: ["bipedalism-first", "lucy-ancestor"],
-  bush: ["early-homo-mess", "tools-who", "paranthropus-side"],
-  leave: ["out-of-africa-1", "erectus-one-species", "fire", "island-dwarfs"],
-  brains: ["heidelberg-real", "lca-neand-sapiens"],
-  several: ["denisovan-distinct", "longi-denisovan", "african-origin", "structured-africa", "naledi-recent", "naledi-burial", "neanderthal-mind"],
-  meet: ["introgression", "ooa-timing", "behavior-revolution"],
-  alone: ["neanderthal-extinction"],
+  split: ["sahel-hominin", "orrorin-biped", "not-a-chimp"],
+  walk: ["bipedalism-first", "anamensis-afarensis", "lucy-ancestor"],
+  bush: ["early-homo-mess", "sediba-homo", "tools-who", "paranthropus-side", "paranthropus-diet"],
+  leave: ["out-of-africa-1", "erectus-one-species", "fire", "island-dwarfs", "climate-driver"],
+  brains: ["heidelberg-real", "antecessor-position", "lca-neand-sapiens"],
+  several: ["denisovan-distinct", "longi-denisovan", "african-origin", "structured-africa", "naledi-recent", "naledi-burial", "neanderthal-mind", "adna-trust"],
+  meet: ["introgression", "ooa-timing", "sea-level-routes", "behavior-revolution", "oldest-art"],
+  alone: ["neanderthal-extinction", "first-americans"],
 };
 const TAXA_BY_CHAPTER: Record<string, string[]> = {
   split: ["sahelanthropus", "orrorin"],
@@ -77,14 +77,7 @@ function ClaimBlock({ claim }: { claim: Claim }) {
           </Ref>
         </h4>
         <p className="mt-2.5">
-          <Rich text={claim.summary} />
-          <sup className="ml-1 whitespace-nowrap text-[11px]">
-            {claim.sourceIds.map((sid, i) => (
-              <Ref key={sid} target={{ kind: "source", id: sid }} className="mx-[1px] px-[1px] leading-[1.5] text-[var(--green)]">
-                {i + 1}
-              </Ref>
-            ))}
-          </sup>
+          <Rich text={claim.summary} sources={claim.sourceIds} />
         </p>
         <p className="mt-2.5 text-[15px] italic text-[var(--muted)]">
           <span className="not-italic font-semibold text-[var(--ink)]">Why this grade. </span>

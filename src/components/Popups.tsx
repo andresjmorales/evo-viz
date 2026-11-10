@@ -13,10 +13,12 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { getClaim, getFossil, getSource, getTaxon, getTheory } from "@/data/catalog";
+import { cultureById } from "@/data/culture";
 import { glossary, termById } from "@/data/glossary";
+import { methodById } from "@/data/methods";
 import { migrations } from "@/data/migrations";
 import { taxa } from "@/data/taxa";
-import { formatKa, formatRange } from "@/lib/format";
+import { formatKa, formatRange, stripCites } from "@/lib/format";
 import { notebook, useNotebook } from "@/lib/notebook";
 import { taxonColor, taxonSoft } from "@/lib/palette";
 import { Figure, StatusBadge, type PanelTarget } from "./ui";
@@ -177,6 +179,8 @@ const KIND_LABEL: Record<RefTarget["kind"], string> = {
   theory: "Model",
   fossil: "Fossil",
   route: "Journey",
+  culture: "Tools and behaviour",
+  method: "How we know",
   source: "Source",
   term: "Glossary",
 };
@@ -339,7 +343,7 @@ export function Preview({ target }: { target: RefTarget }) {
         <StatusBadge status={c.status} />
         <p className="display mt-2 text-[18px] leading-snug text-[var(--ink)]">{c.question}</p>
         <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--ink)]">
-          <Rich text={clip(c.summary, 420)} />
+          <Rich text={clip(stripCites(c.summary), 420)} />
         </p>
         <p className="mt-2 text-[12px] text-[var(--faint)]">
           {c.sourceIds.length} sources:{" "}
@@ -390,7 +394,36 @@ export function Preview({ target }: { target: RefTarget }) {
         <StatusBadge status={m.status} />
         <p className="display mt-2 text-[18px] leading-snug text-[var(--ink)]">{m.label}</p>
         <p className="text-[12px] text-[var(--faint)]">{formatRange(m.startKa, m.endKa)}</p>
-        <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--ink)]">{m.notes}</p>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--ink)]">{stripCites(m.notes)}</p>
+      </div>
+    );
+  }
+  if (target.kind === "culture") {
+    const c = cultureById[target.id];
+    if (!c) return null;
+    return (
+      <div>
+        <StatusBadge status={c.status} />
+        <p className="display mt-2 text-[18px] leading-snug text-[var(--ink)]">{c.label}</p>
+        <p className="text-[12px] text-[var(--faint)]">
+          {c.startKa === c.endKa ? `about ${formatKa(c.startKa)}` : formatRange(c.startKa, c.endKa)}
+        </p>
+        <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--ink)]">
+          <Rich text={clip(stripCites(c.summary), 380)} />
+        </p>
+      </div>
+    );
+  }
+  if (target.kind === "method") {
+    const m = methodById[target.id];
+    if (!m) return null;
+    return (
+      <div>
+        <p className="display text-[18px] leading-snug text-[var(--ink)]">{m.title}</p>
+        <p className="mt-1.5 text-[13.5px] leading-relaxed text-[var(--ink)]">{m.short}</p>
+        <p className="mt-2 text-[13px] leading-relaxed text-[var(--muted)]">
+          <Rich text={clip(stripCites(m.body[0]), 300)} />
+        </p>
       </div>
     );
   }
@@ -526,34 +559,65 @@ const PATTERN = new RegExp(
   "gu",
 );
 
+const CITE = /\[@([\w,-]+)\]/g;
+
+function linkProse(text: string, seen: Set<string>, keyBase: number): ReactNode[] {
+  const out: ReactNode[] = [];
+  let last = 0;
+  for (const m of text.matchAll(PATTERN)) {
+    const target = lookup.get(m[1]);
+    if (!target) continue;
+    const id = `${target.kind}:${target.id}`;
+    if (seen.has(id)) continue;
+    // "ka" and "Ma" only count as units when they follow a number.
+    if ((m[1] === "ka" || m[1] === "Ma") && !/\d\s$/.test(text.slice(0, m.index))) continue;
+    seen.add(id);
+    const i = m.index ?? 0;
+    if (i > last) out.push(text.slice(last, i));
+    out.push(
+      <Ref key={`${keyBase}-${i}`} target={target}>
+        {m[1]}
+      </Ref>,
+    );
+    last = i + m[1].length;
+  }
+  if (last < text.length) out.push(text.slice(last));
+  return out;
+}
+
 /**
- * Prose with species names and technical terms turned into hover notes.
- * Each target is linked once per passage, on its first mention.
+ * Prose with species names and technical terms turned into hover notes, and
+ * inline citations such as [@smith-2020] turned into numbered footnote marks.
+ * Each name or term is linked once per passage, on its first mention.
+ * `sources` fixes the footnote numbering to match a list shown elsewhere.
  */
-export function Rich({ text, skip }: { text: string; skip?: string }) {
+export function Rich({ text, skip, sources }: { text: string; skip?: string; sources?: string[] }) {
   const parts = useMemo(() => {
     const out: ReactNode[] = [];
     const seen = new Set<string>(skip ? [`taxon:${skip}`] : []);
+    const order = [...(sources ?? [])];
     let last = 0;
-    for (const m of text.matchAll(PATTERN)) {
-      const target = lookup.get(m[1]);
-      if (!target) continue;
-      const id = `${target.kind}:${target.id}`;
-      if (seen.has(id)) continue;
-      // "ka" and "Ma" only count as units when they follow a number.
-      if ((m[1] === "ka" || m[1] === "Ma") && !/\d\s$/.test(text.slice(0, m.index))) continue;
-      seen.add(id);
+    let n = 0;
+    for (const m of text.matchAll(CITE)) {
       const i = m.index ?? 0;
-      if (i > last) out.push(text.slice(last, i));
+      out.push(...linkProse(text.slice(last, i), seen, n++));
       out.push(
-        <Ref key={i} target={target}>
-          {m[1]}
-        </Ref>,
+        <sup key={`c${i}`} className="whitespace-nowrap text-[0.68em]">
+          {m[1].split(",").map((id, j) => {
+            if (!order.includes(id)) order.push(id);
+            return (
+              <Ref key={id} target={{ kind: "source", id }} className="px-[1.5px] leading-[1.6] text-[var(--green)]">
+                {j ? "," : ""}
+                {order.indexOf(id) + 1}
+              </Ref>
+            );
+          })}
+        </sup>,
       );
-      last = i + m[1].length;
+      last = i + m[0].length;
     }
-    if (last < text.length) out.push(text.slice(last));
+    out.push(...linkProse(text.slice(last), seen, n));
     return out;
-  }, [text, skip]);
+  }, [text, skip, sources]);
   return <>{parts}</>;
 }

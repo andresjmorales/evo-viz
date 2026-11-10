@@ -4,8 +4,9 @@ import { useMemo, useState } from "react";
 import { claims } from "@/data/claims";
 import { theories } from "@/data/theories";
 import type { Claim, Status } from "@/data/types";
-import { STATUS_BLURB, STATUS_LABEL } from "@/lib/format";
+import { STATUS_BLURB, STATUS_LABEL, stripCites } from "@/lib/format";
 import { STATUS_COLOR, THEORY_COLOR } from "@/lib/palette";
+import { Methods } from "./Methods";
 import { SectionHeading, StatusBadge, type OpenFn } from "./ui";
 
 const ORDER: Status[] = ["settled", "strong", "contested", "shaky", "speculative"];
@@ -19,7 +20,7 @@ export function ClaimCard({ claim, onOpen }: { claim: Claim; onOpen: OpenFn }) {
     >
       <StatusBadge status={claim.status} />
       <h3 className="display mt-3 text-[19px] leading-snug text-[var(--ink)]">{claim.question}</h3>
-      <p className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed text-[var(--muted)]">{claim.summary}</p>
+      <p className="mt-2 line-clamp-3 text-[13.5px] leading-relaxed text-[var(--muted)]">{stripCites(claim.summary)}</p>
       <span className="mt-auto flex items-center justify-between pt-4 text-[12px] text-[var(--faint)]">
         <span>{claim.sourceIds.length} sources</span>
         <span className="font-medium text-[var(--green)] opacity-0 transition group-hover:opacity-100">Read the evidence →</span>
@@ -106,6 +107,7 @@ export function Questions({ onOpen }: { onOpen: OpenFn }) {
           Show all {list.length} questions
         </button>
       ) : null}
+      <Methods />
     </section>
   );
 }

@@ -115,8 +115,14 @@ export interface Migration {
   label: string;
   startKa: number;
   endKa: number;
-  /** Waypoints as [lat, lon], origin first. Paths follow land or short crossings. */
+  /** Waypoints as [lat, lon], origin first. Paths stay on land except where `sea` says otherwise. */
   path: [number, number][];
+  /**
+   * Indexes of waypoints that begin a deliberate water crossing: a strait, an
+   * open-sea voyage, or shelf that was dry land when sea level was lower.
+   * "all" marks a route travelled by boat throughout.
+   */
+  sea?: number[] | "all";
   status: Status;
   notes: string;
   sourceIds: string[];
