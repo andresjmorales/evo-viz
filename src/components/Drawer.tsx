@@ -23,6 +23,7 @@ import { timeStore } from "@/lib/timeStore";
 import { notebook, useNotebook } from "@/lib/notebook";
 import { Ref, Rich } from "./Popups";
 import { notice } from "./SkullLab";
+import { Knapping } from "./Knapping";
 import { ToolArt } from "./ToolArt";
 import { Figure, StatusBadge, type OpenFn, type PanelTarget } from "./ui";
 
@@ -351,8 +352,8 @@ function ToolsTab({
                 onClick={() => onOpen({ kind: "culture", id: c.id })}
                 className="group flex flex-col rounded-2xl border border-[var(--line)] p-3 text-left transition hover:border-[var(--green)]"
               >
-                <span className="grid h-[76px] place-items-center rounded-xl bg-[var(--panel)] text-[#3b4a5a] transition group-hover:text-[var(--green)]">
-                  <ToolArt art={c.art} size={60} />
+                <span className="grid h-[108px] place-items-center rounded-xl bg-[var(--panel)]">
+                  <ToolArt art={c.art} size={96} className="transition-transform duration-300 group-hover:scale-105" />
                 </span>
                 <span className="mt-2.5 text-[13.5px] font-medium leading-snug text-[var(--ink)]">{c.label}</span>
                 <span className="mt-0.5 text-[11.5px] tabular-nums text-[var(--faint)]">
@@ -368,6 +369,12 @@ function ToolsTab({
             ))}
           </div>
         </>
+      ) : null}
+      {tools.some(({ c }) => c.id === "oldowan" || c.id === "acheulean") ? (
+        <section className="mt-6">
+          <h3 className="mb-2 text-[14px] font-semibold text-[var(--ink)]">From cobble to handaxe: strike it yourself</h3>
+          <Knapping />
+        </section>
       ) : null}
       {!note && !tools.length ? (
         <p className="text-[14px] text-[var(--muted)]">Nothing on the tools lane is linked to this species yet.</p>
@@ -514,8 +521,8 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         </p>
         <div className="mt-2 flex items-start gap-4">
           <h2 className="display min-w-0 flex-1 text-[30px] leading-[1.12] text-[var(--ink)]">{c.label}</h2>
-          <span className="grid h-[88px] w-[88px] shrink-0 place-items-center rounded-2xl bg-[var(--panel)] text-[#3b4a5a]">
-            <ToolArt art={c.art} size={70} />
+          <span className="grid h-[112px] w-[112px] shrink-0 place-items-center rounded-2xl bg-[var(--panel)]">
+            <ToolArt art={c.art} size={100} />
           </span>
         </div>
         <div className="mt-4 flex items-center gap-2">
@@ -525,6 +532,12 @@ function Body({ target, onOpen }: { target: PanelTarget; onOpen: OpenFn }) {
         <p className="mt-5 text-[15.5px] leading-[1.7] text-[var(--ink)]">
           <Rich text={c.summary} sources={c.sourceIds} />
         </p>
+        {["lomekwian", "oldowan", "acheulean"].includes(c.id) ? (
+          <section className="mt-6">
+            <h3 className="mb-2 text-[13px] font-semibold text-[var(--ink)]">How it was made: strike it yourself</h3>
+            <Knapping />
+          </section>
+        ) : null}
         {c.makers.length ? (
           <section className="mt-5">
             <h3 className="text-[13px] font-semibold text-[var(--ink)]">Made or done by</h3>

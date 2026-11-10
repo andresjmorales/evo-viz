@@ -26,6 +26,9 @@ Temporary working list. Delete this file once the items are done or moved to iss
 - Sea-level labels on the globe now say when the figure is a rough estimate (before 800 ka) or missing (before 5.3 Ma)
 - Species pages fact-checked and given inline citations with a source list; fixes include Schöningen's re-dating on the heidelbergensis page, Mode 1 (not Mode 2) tools for antecessor, the 2022 Sahelanthropus limb bones, the Harbin–Denisovan protein and DNA match, and Xiahe identified by proteins only
 - Glossary read through; one definition corrected (modern human brow ridges)
+- Tool drawings redrawn with shading and colour; stone tools use a shared flake-scar renderer (`src/lib/facets.ts`)
+- Knapping animation (cobble to Oldowan chopper to Acheulean handaxe) on the stone-tool pages and the Tools tab
+- "How evolution works" gains gene flow and speciation panels
 
 ## Still to do
 
@@ -58,7 +61,9 @@ Temporary working list. Delete this file once the items are done or moved to iss
 - The four panels are illustrations. The selection and drift simulations use simple textbook models, and the wording around them should be read by a biologist.
 - The common-questions answers on faith are written to be fair to believing readers; they would benefit from review by someone in that audience.
 - Neither section is on the Field notes page yet.
-- No panel yet for sexual recombination, gene flow or speciation.
+- No panel yet for sexual recombination.
+- The gene flow and speciation panels are cartoons like the others: speciation in particular uses a made-up clock for how fast incompatibilities build up.
+- The knapping animation shows one face and eleven blows; real handaxes are worked on both faces. An experimental knapper should check the sequence.
 
 ### Quiz
 

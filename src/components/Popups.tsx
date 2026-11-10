@@ -409,7 +409,7 @@ export function Preview({ target }: { target: RefTarget }) {
             <StatusBadge status={c.status} />
             <p className="display mt-2 text-[18px] leading-snug text-[var(--ink)]">{c.label}</p>
           </span>
-          <ToolArt art={c.art} size={44} className="shrink-0 text-[#3b4a5a]" />
+          <ToolArt art={c.art} size={56} className="shrink-0" />
         </div>
         <p className="text-[12px] text-[var(--faint)]">
           {c.startKa === c.endKa ? `about ${formatKa(c.startKa)}` : formatRange(c.startKa, c.endKa)}
